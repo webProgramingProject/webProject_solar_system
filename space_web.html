@@ -4,6 +4,169 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+  
+
+    <script id = "vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 a_position_v4;
+        attribute vec4 a_color_v4;
+        attribute vec2 a_texcoord_v2;
+
+        uniform mat4 u_scale_m4;
+        uniform mat4 u_rotate_m4;
+        uniform mat4 u_translate_m4;
+
+        uniform mat4 u_view_m4;
+
+        uniform mat4 u_proj_m4; 
+
+        varying vec4 v_color_v4;
+        varying vec4 v_pos_v4;
+        varying vec2 v_texcoord_v2;
+
+        void main()
+        {
+            v_color_v4 = a_color_v4;
+
+            vec4 pos= a_position_v4;
+           
+            v_pos_v4 = pos;
+            
+            pos.z = -pos.z;
+        
+            gl_Position =u_proj_m4* u_view_m4 * u_translate_m4 *u_rotate_m4*u_scale_m4 * pos;
+           
+        
+        }
+    </script>
+    <script id = "fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 v_color_v4;
+        varying vec4 v_pos_v4;
+        varying vec2 v_texcoord_v2;
+        uniform sampler2D u_texture_s2D;
+
+      
+        void main()
+        {   
+            float pi = 3.1415926535897932384626433;
+            vec2 texcoord_v2;
+            if(v_pos_v4.z < 0.0)
+                texcoord_v2 = vec2( (atan(-v_pos_v4.x , -v_pos_v4.z) +pi)/(pi*2.0) + 0.25 , 0.5 - asin(v_pos_v4.y)/(pi) );
+            else
+                texcoord_v2 = vec2( atan(v_pos_v4.x , v_pos_v4.z)/(pi*2.0) + 0.25, 0.5 - asin(v_pos_v4.y )/(pi) );
+
+
+            vec4 tex_color = texture2D(u_texture_s2D , texcoord_v2);
+            vec4 color = vec4( (v_pos_v4.y + 1.0)/2.0 , (v_pos_v4.y + 1.0)/2.0 , (v_pos_v4.y + 1.0)/2.0 , 1.0  );
+            gl_FragColor = tex_color;
+        }
+
+    </script>
+    <script src="render.js"></script>
+    <script src="math_affine.js"></script>
+    <script>
+
+    
+    class sphere
+    {
+        pos_v4f;
+        rot_v4f;
+        scale_v4f;
+
+        sphere_vbo;
+        sphere_color_buffer;
+        sphere_vbo_len;
+
+        sphere_vbo_id;
+        sphere_tbo_id;
+
+        sphere_texture_info;
+
+        constructor()
+        {
+            this.pos_v4f = [0 , 0 , 0 , 0];
+            this.rot_v4f = [0 , 0 , 0 , 0];
+            this.scale_v4f = [0 ,0 ,0 ,0];
+            this.sphere_vbo = [];
+            this.sphere_color_buffer = [];
+            this.sphere_texture_coord_buffer = [];
+            this.sphere_vbo_len = 0;
+            this.sphere_texture_coord_buffer_len = 0;
+        }
+
+        sub_division_tri(level_1i,start_idx ,p1_v4f ,p2_v4f ,p3_v4f)
+        {
+          
+        if(level_1i == 0)
+        {
+            this.sphere_vbo[start_idx] = p1_v4f[0];     //X
+            this.sphere_vbo[start_idx+1] = p1_v4f[1];   //Y
+            this.sphere_vbo[start_idx+2] = p1_v4f[2];   //Z
+            this.sphere_vbo[start_idx+3] = 1.0;         //W
+
+            this.sphere_vbo[start_idx+4] = p2_v4f[0];
+            this.sphere_vbo[start_idx+5] = p2_v4f[1];
+            this.sphere_vbo[start_idx+6] = p2_v4f[2];
+            this.sphere_vbo[start_idx+7] = 1.0;
+
+            this.sphere_vbo[start_idx+8] = p3_v4f[0];
+            this.sphere_vbo[start_idx+9] = p3_v4f[1];
+            this.sphere_vbo[start_idx+10] = p3_v4f[2];
+            this.sphere_vbo[start_idx+11] = 1.0;
+            this.sphere_vbo_len = this.sphere_vbo_len + 12;
+        }
+        else
+        {
+            var p1_p2_v4f = add_v4v4_xyz(p1_v4f , p2_v4f);
+            p1_p2_v4f = normalize_v4_xyz(p1_p2_v4f);
+
+            var p2_p3_v4f = add_v4v4_xyz(p2_v4f , p3_v4f);
+            p2_p3_v4f = normalize_v4_xyz(p2_p3_v4f);
+
+            var p3_p1_v4f = add_v4v4_xyz(p3_v4f ,p1_v4f);
+            p3_p1_v4f = normalize_v4_xyz(p3_p1_v4f);
+            
+            
+            this.sub_division_tri(level_1i - 1 , this.sphere_vbo_len , p1_v4f , p1_p2_v4f , p3_p1_v4f);
+            this.sub_division_tri(level_1i - 1 , this.sphere_vbo_len , p2_v4f , p2_p3_v4f , p1_p2_v4f);
+            this.sub_division_tri(level_1i - 1 , this.sphere_vbo_len , p3_v4f , p3_p1_v4f , p2_p3_v4f);
+            this.sub_division_tri(level_1i - 1 , this.sphere_vbo_len , p1_p2_v4f , p2_p3_v4f , p3_p1_v4f);
+   
+        }
+
+        }
+
+        gen_sphere(level_1i, src_cube_object , src_cube_object_len)
+        {
+            for(var i = 0; i < src_cube_object_len; i += 12)
+            {
+                var p1_v4f = [ src_cube_object[i] , src_cube_object[i+1] , src_cube_object[i+2] , src_cube_object[i+3]  ];
+                p1_v4f = normalize_v4_xyz(p1_v4f);
+
+                var p2_v4f = [ src_cube_object[i+4] , src_cube_object[i+5] , src_cube_object[i+6] , src_cube_object[i+7]  ];
+                p2_v4f = normalize_v4_xyz(p2_v4f);
+
+                var p3_v4f = [ src_cube_object[i+8] , src_cube_object[i+9] , src_cube_object[i+10] , src_cube_object[i+11]  ];
+                p3_v4f = normalize_v4_xyz(p3_v4f);
+             
+                this.sub_division_tri(level_1i , this.sphere_vbo_len , p1_v4f,p2_v4f,p3_v4f);
+       
+            }
+
+        }
+
+
+      
+
+
+    }
+   
+   
+    </script>
+
+
+
+
     <style>
         * {
             box-sizing: border-box;
@@ -18,7 +181,7 @@
         body {
             height: 100%;
             width: 100%;
-            background-image: url('https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/Web_Background.jpg?token=GHSAT0AAAAAADCDKRJ3EZRVCW6JTF2XTL6MZ72E36A');
+            background-image: url('https://cdn.pixabay.com/photo/2023/01/24/23/20/universe-7742159_1280.jpg');
             background-position: center center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -34,7 +197,7 @@
         }
         .section {
             width: 70%; height: 70%; float: left;
-            background-color: yellow;
+         
         }
         .aside {
             width: 15%; height: 70%; float: left;
@@ -81,6 +244,11 @@
             width: 0;
         }
 
+        canvas{
+            width: 100%;
+            height: 100%;
+        }
+
     </style>
 </head>
 <body>
@@ -124,7 +292,351 @@
 출처: 한국천문연구원 천문우주지식정보 (https://astro.kasi.re.kr), 2025년 4월 12일 기준
 출처: NASA 태양계 탐사(Solar System Exploration) (https://solarsystem.nasa.gov), 2025년 4월 12일 기준
     </nav>
-    <section class = "section"><!--태양계--></section>
+    <section class = "section">
+        <canvas id = "c"  ></canvas>
+        <script>
+            
+            var cube_vertex = [
+                -1 , -1 , -1 , 1,
+                -1 , -1 ,  1 , 1,
+                -1 ,  1 , -1 , 1,
+                -1 ,  1 ,  1 , 1,
+    
+                 1 , -1 , -1 , 1,
+                 1 , -1 ,  1 , 1,
+                 1 ,  1 , -1 , 1,
+                 1 ,  1 ,  1 , 1
+            ];
+    
+            var cube_inidces = [
+                //p1 , p2 , p3
+                //bottom
+                0,4,5,  // 0 1 2
+                1,0,5,  // 3 4 5
+    
+                //back
+                1,5,7,	// 6 7 8
+                3,1,7,	// 9 10 11
+    
+                //top
+                3,7,6,	//12 13 14
+                2,3,6,	//15 16 17
+    
+                //front
+                2,6,4,	//18 19 20
+                0,2,4,	//21 22 23
+    
+                //left
+                0,1,3,	//24 25 26
+                2,0,3,	//27 28 29
+    
+                //right
+                5,4,6,	//30 31 32
+                7,5,6	//33 34 35
+            ]
+    
+    
+            function requestCORSIfNotSameOrigin(img, url) {
+                if ((new URL(url, window.location.href)).origin !== window.location.origin) {
+                img.crossOrigin = "";
+            }
+            }
+    
+    
+    
+            function loadImageAndCreateTextureInfo(gl,url) {
+                var tex = gl.createTexture();
+                gl.bindTexture(gl.TEXTURE_2D, tex);
+                //Fill the texture with a 1x1 blue pixel.
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+                          new Uint8Array([0, 0, 255, 255]));
+                
+                // let's assume all images are not a power of 2
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                
+                var textureInfo = {
+                    width: 1,   // we don't know the size until it loads
+                    height: 1,
+                    texture: tex,
+                };
+                var img = new Image();
+                img.addEventListener('load', function() {
+                textureInfo.width = img.width;
+                textureInfo.height = img.height;
+                
+                gl.bindTexture(gl.TEXTURE_2D, textureInfo.texture);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+                });
+                requestCORSIfNotSameOrigin(img, url);
+                img.src = url;
+            
+                return textureInfo;
+            }
+            var program;//나중에 class 문으로 해결 
+            function initGLSL(gl ,vertexShaderSrcId , fragmentShaderSrcId)
+            {
+            
+                var vertexShaderSource =  document.querySelector(vertexShaderSrcId).text;
+                var fragmentShaderSource = document.querySelector(fragmentShaderSrcId).text;
+    
+                var vertexShader = createShader(gl , gl.VERTEX_SHADER , vertexShaderSource);
+                var fragmentShader = createShader(gl ,gl.FRAGMENT_SHADER , fragmentShaderSource);
+                program = createProgram(gl , vertexShader , fragmentShader);
+                gl.useProgram(program);
+    
+            }
+    
+    
+    
+    
+          
+            function main()
+            {
+              
+    
+            var canvas = document.querySelector("#c");
+            canvas.setAttribute("width", window.innerWidth);
+            canvas.setAttribute("height", window.innerHeight);
+
+         
+            var gl = canvas.getContext("webgl");
+                
+            console.log(canvas.width);
+            console.log(canvas.height);
+
+            initGLSL(gl,"#vertex-shader" , "#fragment-shader");
+    
+            var w = canvas.width;
+            var aPos_loc_v4f = gl.getAttribLocation(program , "a_position_v4");
+            var aColor_loc_v4f = gl.getAttribLocation(program , "a_color_v4");
+            var aTex_loc_v2f = gl.getAttribLocation(program, "a_texcoord_v2");
+    
+            var u_trans_loc_m4f = gl.getUniformLocation(program, "u_translate_m4")
+            var u_rotate_loc_m4f = gl.getUniformLocation(program , "u_rotate_m4");
+            var u_scale_loc_m4f = gl.getUniformLocation(program , "u_scale_m4");
+    
+            var u_view_loc_m4f = gl.getUniformLocation(program , "u_view_m4");
+            var u_proj_loc_m4f = gl.getUniformLocation(program , "u_proj_m4");
+            gl.enableVertexAttribArray(aPos_loc_v4f);
+    
+            var cube = [];
+            for(var i = 0; i < 144; i+= 4)
+            {
+                cube[i] = cube_vertex[cube_inidces[i/4]*4 + 0];
+                cube[i+1] = cube_vertex[cube_inidces[i/4]*4 + 1];
+                cube[i+2] = cube_vertex[cube_inidces[i/4]*4 + 2];
+                cube[i+3] = cube_vertex[cube_inidces[i/4]*4 + 3];
+            }
+            var sphere_object = new sphere();  // origin_sphere
+            sphere_object.gen_sphere(6 ,cube , 144);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+            var sun =   init_sphere(gl ,sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/sun.jpg");
+            
+            var planets_distance = [0.39, 0.72 , 1.0 , 1.52  , 5.20 , 12, 19.2 , 30.5];//태양으로 부터의 거리 AU
+            var size = [0.4 , 0.9 , 1.0 , 0.5 , 11.2 , 9.4 , 4.0 , 3.9]; // 지구와의 크기 비 태양: 109
+    
+            var planets_rot = [0.01694 , 0.00411 , 1 , 0.975 , 2.4, 2.24 , 1.411 , 1.5]; // 행성자전 주기
+            var planet_orbit = [2.073 , 1.502 ,  1 , 0.531 , 1/12 * 5 , 1/29.5 * 10 , 1/84 * 20 , 1/165 * 30]
+    
+    
+            var planet = [];
+            planet[0] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/planet_0.jpg");
+            planet[1] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/planet_1.jpg");
+            planet[2] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/planet_2.jpg");
+            planet[3] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/planet_3.jpg");
+            planet[4] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/planet_4.jpg");
+            planet[5] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/planet_5.jpg");
+            planet[6] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/planet_6.jpg");
+            planet[7] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/planet_7.jpg");
+    
+            var center_planet = sun;
+    
+            var solar_system_ratio = (planets_distance[7]*214);
+        
+            var solar_system_distance_scale = 0.0;
+            var solar_system_size_scale = 0.0
+    
+            sun.scale_v4f = [ 109/4, 109/4, 109/4, 1];
+            console.log( sun.scale_v4f);
+            for(var i = 0; i < 8; i++)
+            {
+                planet[i].pos_v4f = [109/3 + i*10 + planets_distance[i]*2.5 , 0 , 0 , 1];
+                
+                planet[i].scale_v4f = [0.9 +  size[i]*0.9 ,0.9 + size[i]*0.9  , 0.9 + size[i]*0.9 , 1];
+    
+                var init_pos = (PI / 180) * Math.random()*360;
+                x =  planet[i].pos_v4f[0] * Math.cos(init_pos) -   planet[i].pos_v4f[2] * Math.sin(init_pos); 
+                y =  planet[i].pos_v4f[0] * Math.sin(init_pos) +   planet[i].pos_v4f[2] * Math.cos(init_pos); 
+                planet[i].pos_v4f[0]  = x;
+                planet[i].pos_v4f[2]  = y;
+    
+            }
+    
+            //0 all solar system 1 sun 2....
+            var plnaet_seletion = 0;
+            var view_cam_radius = 210;
+          
+            select_planet(plnaet_seletion);
+               
+            function select_planet(num)
+            {
+               
+                if(num == 0)
+                {   
+                    view_cam_radius = 210;
+                    center_planet = sun;
+                }
+                else if(num == 1)
+                {
+                    view_cam_radius = 100;
+                    center_planet = sun;   
+                }
+                else if(num >= 2 && num <= 9)
+                {
+                    view_cam_radius = 100;
+                    center_planet.sphere_texture_info = planet[num - 2].sphere_texture_info;
+                    
+                }
+                else
+                {
+                    view_cam_radius = 210;
+                }
+    
+            }
+    
+    
+    
+    
+    
+    
+           
+           
+            var view_cam_pos_v4f = [0 ,  Math.sin(PI / 180 * 30) * view_cam_radius,  Math.cos(PI / 180 * 30) * view_cam_radius , 1];
+            var view_cam_up_v4f = [0 , 1 , 0, 1];
+            var view_cam_at_v4f = [0 , 0 , 0 , 1]
+            var angle = 0;
+            gl.viewport(0, 0, window.innerWidth, window.innerHeight);
+            gl.enable(gl.CULL_FACE);
+            gl.enable(gl.DEPTH_TEST);
+    
+            
+            
+            var earth_rot = (PI/180 * 1) *  (1/60) * 6 * 365 * 0.3; 
+            var earth_orbit = (PI/180 * 1) *  (1/60) * 6 * 2;
+    
+            var theta =0;
+            gl.clearColor(0,  0, 0 , 0);
+            draw();
+            function draw()
+            {     
+    
+                const cam_object = new view_cam();
+                const screen_object = new proj_screen();
+              
+               
+                gl.clear(gl.COLOR_BUFFER_BIT);
+                gl.clearDepth(-1);
+    
+                cam_object.look_at_LH(view_cam_pos_v4f , view_cam_at_v4f , view_cam_up_v4f);
+                screen_object.perspective_fov_LH(PI/180 * 60 , window.innerWidth/window.innerHeight , 1 , 500.0 );
+                gl.uniformMatrix4fv(u_view_loc_m4f, 0,  cam_object.view_mat4);
+                gl.uniformMatrix4fv(u_proj_loc_m4f, 0, screen_object.proj_mat4);
+    
+                
+                sphere_object.rot_v4f[3] += (1/60 * 365) / 1000;
+                theta = (1/60) / 10;
+                x =  sphere_object.pos_v4f[0] * Math.cos(earth_orbit) -  sphere_object.pos_v4f[2] * Math.sin(earth_orbit); 
+                y =  sphere_object.pos_v4f[0] * Math.sin(earth_orbit) +  sphere_object.pos_v4f[2] * Math.cos(earth_orbit); 
+                sphere_object.pos_v4f[0]  = x;
+                sphere_object.pos_v4f[2]  = y;
+    
+    
+        
+               
+                draw_sphere(gl,center_planet);
+                if(plnaet_seletion == 0)
+                {
+                    for(var i = 0; i < 8; i++)
+                    {
+                        planet[i].rot_v4f[3] +=planets_rot[i] * earth_rot;
+                      
+                        x =  planet[i].pos_v4f[0] * Math.cos(planet_orbit[i]* earth_orbit) -   planet[i].pos_v4f[2] * Math.sin(planet_orbit[i]* earth_orbit); 
+                        y =  planet[i].pos_v4f[0] * Math.sin(planet_orbit[i]* earth_orbit) +   planet[i].pos_v4f[2] * Math.cos(planet_orbit[i]* earth_orbit); 
+                        planet[i].pos_v4f[0]  = x;
+                        planet[i].pos_v4f[2]  = y;
+                        draw_sphere(gl , planet[i]);
+                    }
+                }
+               
+                requestAnimationFrame(draw);
+            }
+    
+            
+    
+    
+            function init_sphere(gl , origin_sphere,textur_url)
+            {
+                var new_sphere = new sphere();
+                new_sphere.sphere_vbo = origin_sphere.sphere_vbo;
+                new_sphere.sphere_vbo_len = origin_sphere.sphere_vbo_len;
+               
+                new_sphere.sphere_texture_info = loadImageAndCreateTextureInfo(gl , textur_url);
+                
+                new_sphere.sphere_vbo_id = gl.createBuffer();
+    
+                gl.bindTexture(gl.TEXTURE_2D , new_sphere.sphere_texture_info.texture );
+                gl.bindBuffer(gl.ARRAY_BUFFER , new_sphere.sphere_vbo_id);
+                gl.bufferData(gl.ARRAY_BUFFER , new Float32Array(new_sphere.sphere_vbo) , gl.STATIC_DRAW );
+                gl.vertexAttribPointer(aPos_loc_v4f , 4, gl.FLOAT , false , 0 , 0);
+    
+                new_sphere.pos_v4f = [0, 0 , 0 , 1];
+                new_sphere.rot_v4f = [0 , 1, 0 , 0];
+                new_sphere.scale_v4f = [1 , 1 ,1 ,1];
+    
+                return new_sphere
+    
+            }
+           
+    
+            function draw_sphere(gl ,draw_sphere)
+            {
+                const trans_object = new model_object();
+                trans_object.translate(draw_sphere.pos_v4f);
+                trans_object.rotate(draw_sphere.rot_v4f);
+                trans_object.scale( draw_sphere.scale_v4f);
+                gl.uniformMatrix4fv(u_trans_loc_m4f, 0, trans_object.trans_mat4);
+                gl.uniformMatrix4fv(u_rotate_loc_m4f, 0, trans_object.rotate_mat4);
+                gl.uniformMatrix4fv(u_scale_loc_m4f, 0, trans_object.scale_mat4);
+    
+                gl.bindTexture(gl.TEXTURE_2D , draw_sphere.sphere_texture_info.texture );
+                gl.bindBuffer(gl.ARRAY_BUFFER , draw_sphere.sphere_vbo_id);
+                gl.drawArrays(gl.TRIANGLES , 0, draw_sphere.sphere_vbo_len);
+          
+            }
+         
+            
+            }
+           
+            
+            main();
+        </script>
+
+
+
+
+        
+    </section>
     <aside class = "aside"><!--버튼-->
         1.	태양계
 -	소개
