@@ -526,7 +526,7 @@
             var view_cam_up_v4f = [0 , 1 , 0, 1];
             var view_cam_at_v4f = [0 , 0 , 0 , 1]
             var angle = 0;
-            gl.viewport(0, 0, gl.canvas.width , gl.canvas.height);
+            gl.viewport(0, 0, window.innerWidth, window.innerHeight);
             gl.enable(gl.CULL_FACE);
             gl.enable(gl.DEPTH_TEST);
     
@@ -549,7 +549,7 @@
                 gl.clearDepth(-1);
     
                 cam_object.look_at_LH(view_cam_pos_v4f , view_cam_at_v4f , view_cam_up_v4f);
-                screen_object.perspective_fov_LH(PI/180 * 60 , canvas.width/canvas.height , 1 , 500.0 );
+                screen_object.perspective_fov_LH(PI/180 * 60 , window.innerWidth/window.innerHeight , 1 , 500.0 );
                 gl.uniformMatrix4fv(u_view_loc_m4f, 0,  cam_object.view_mat4);
                 gl.uniformMatrix4fv(u_proj_loc_m4f, 0, screen_object.proj_mat4);
     
