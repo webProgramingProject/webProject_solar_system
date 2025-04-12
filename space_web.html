@@ -8,8 +8,6 @@
 
     <script id = "vertex-shader" type="x-shader/x-vertex">
         attribute vec4 a_position_v4;
-        attribute vec4 a_color_v4;
-        attribute vec2 a_texcoord_v2;
 
         uniform mat4 u_scale_m4;
         uniform mat4 u_rotate_m4;
@@ -18,15 +16,12 @@
         uniform mat4 u_view_m4;
 
         uniform mat4 u_proj_m4; 
-
-        varying vec4 v_color_v4;
         varying vec4 v_pos_v4;
-        varying vec2 v_texcoord_v2;
+      
 
         void main()
         {
-            v_color_v4 = a_color_v4;
-
+         
             vec4 pos= a_position_v4;
            
             v_pos_v4 = pos;
@@ -40,9 +35,7 @@
     </script>
     <script id = "fragment-shader" type="x-shader/x-fragment">
         precision mediump float;
-        varying vec4 v_color_v4;
         varying vec4 v_pos_v4;
-        varying vec2 v_texcoord_v2;
         uniform sampler2D u_texture_s2D;
 
       
@@ -397,8 +390,8 @@
               
     
             var canvas = document.querySelector("#c");
-            canvas.setAttribute("width", window.innerWidth);
-            canvas.setAttribute("height", window.innerHeight);
+            canvas.setAttribute("width", window.innerWidth*2);
+            canvas.setAttribute("height", window.innerHeight*2);
 
          
             var gl = canvas.getContext("webgl");
@@ -410,9 +403,7 @@
     
             var w = canvas.width;
             var aPos_loc_v4f = gl.getAttribLocation(program , "a_position_v4");
-            var aColor_loc_v4f = gl.getAttribLocation(program , "a_color_v4");
-            var aTex_loc_v2f = gl.getAttribLocation(program, "a_texcoord_v2");
-    
+
             var u_trans_loc_m4f = gl.getUniformLocation(program, "u_translate_m4")
             var u_rotate_loc_m4f = gl.getUniformLocation(program , "u_rotate_m4");
             var u_scale_loc_m4f = gl.getUniformLocation(program , "u_scale_m4");
@@ -431,12 +422,10 @@
             }
             var sphere_object = new sphere();  // origin_sphere
             sphere_object.gen_sphere(6 ,cube , 144);
+            console.log(sphere_object.sphere_vbo.length);
+            console.log(sphere_object.sphere_vbo_len);
     
-    
-    
-    
-    
-    
+
     
     
     
@@ -526,7 +515,7 @@
             var view_cam_up_v4f = [0 , 1 , 0, 1];
             var view_cam_at_v4f = [0 , 0 , 0 , 1]
             var angle = 0;
-            gl.viewport(0, 0, window.innerWidth, window.innerHeight);
+            gl.viewport(0, 0, window.innerWidth*2, window.innerHeight*2);
             gl.enable(gl.CULL_FACE);
             gl.enable(gl.DEPTH_TEST);
     
@@ -621,7 +610,7 @@
     
                 gl.bindTexture(gl.TEXTURE_2D , draw_sphere.sphere_texture_info.texture );
                 gl.bindBuffer(gl.ARRAY_BUFFER , draw_sphere.sphere_vbo_id);
-                gl.drawArrays(gl.TRIANGLES , 0, draw_sphere.sphere_vbo_len);
+                gl.drawArrays(gl.TRIANGLES , 0, draw_sphere.sphere_vbo_len/4);
           
             }
          
