@@ -508,18 +508,14 @@
     
     
     
-    
-           
-           
-            var view_cam_pos_v4f = [0 ,  Math.sin(PI / 180 * 30) * view_cam_radius,  Math.cos(PI / 180 * 30) * view_cam_radius , 1];
-            var view_cam_up_v4f = [0 , 1 , 0, 1];
-            var view_cam_at_v4f = [0 , 0 , 0 , 1]
-            var angle = 0;
+         
             gl.viewport(0, 0, window.innerWidth*2, window.innerHeight*2);
             gl.enable(gl.CULL_FACE);
             gl.enable(gl.DEPTH_TEST);
     
             
+          
+           
             
             var earth_rot = (PI/180 * 1) *  (1/60) * 6 * 365 * 0.3; 
             var earth_orbit = (PI/180 * 1) *  (1/60) * 6 * 2;
@@ -532,10 +528,21 @@
     
                 const cam_object = new view_cam();
                 const screen_object = new proj_screen();
-              
+                
+                
+             
+                select_planet(plnaet_seletion);
+                var view_cam_pos_v4f = [0 ,  Math.sin(PI / 180 * 30) * view_cam_radius,  Math.cos(PI / 180 * 30) * view_cam_radius , 1];
+                var view_cam_up_v4f = [0 , 1 , 0, 1];
+                var view_cam_at_v4f = [0 , 0 , 0 , 1]
+                var angle = 0;
+
+
                
                 gl.clear(gl.COLOR_BUFFER_BIT);
                 gl.clearDepth(-1);
+
+             
     
                 cam_object.look_at_LH(view_cam_pos_v4f , view_cam_at_v4f , view_cam_up_v4f);
                 screen_object.perspective_fov_LH(PI/180 * 60 , window.innerWidth/window.innerHeight , 1 , 500.0 );
@@ -554,6 +561,7 @@
         
                
                 draw_sphere(gl,center_planet);
+                
                 if(plnaet_seletion == 0)
                 {
                     for(var i = 0; i < 8; i++)
