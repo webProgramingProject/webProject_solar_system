@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>우주의 창, 태양계 이야기</title>
     <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-barun-pen.css" rel="stylesheet">
     <style>
         body {
@@ -303,8 +303,53 @@
         button.textContent = isOpen ? '∨' : '∧';
         element.style.opacity = isOpen ? 0.7 : 1;
     }
-   
-   
+
+
+    // nav -> aside 연결하는 함수 구현 부분
+    
+    function open_nav_item(index) {
+    const allNavItems = document.querySelectorAll('.nav-item');
+
+    allNavItems.forEach(item => {
+        const subItems = item.querySelector('.sub-items');
+        const button = item.querySelector('.toggle-button');
+        if (subItems) subItems.style.display = 'none';
+        if (button) button.textContent = '∨';
+        item.style.opacity = 0.5;
+
+        const subItemList = item.querySelectorAll('.sub-item');
+        subItemList.forEach(sub => {
+            const subContent = sub.querySelector('.sub-content');
+            const subButton = sub.querySelector('.toggle-button');
+            if (subContent) subContent.style.display = 'none';
+            if (subButton) subButton.textContent = '∨';
+            sub.style.opacity = 0.7;
+        });
+    });
+
+    const targetItem = allNavItems[index];
+    if (!targetItem) return;
+
+    // 열기
+    const targetSubItems = targetItem.querySelector('.sub-items');
+    const toggleBtn = targetItem.querySelector('.toggle-button');
+    if (targetSubItems) targetSubItems.style.display = 'block';
+    if (toggleBtn) toggleBtn.textContent = '∧';
+    targetItem.style.opacity = 1;
+
+    const subItems = targetItem.querySelectorAll('.sub-item');
+    subItems.forEach(sub => {
+        const subContent = sub.querySelector('.sub-content');
+        const subBtn = sub.querySelector('.toggle-button');
+        if (subContent) subContent.style.display = 'block';
+        if (subBtn) subBtn.textContent = '∧';
+        sub.style.opacity = 1;
+    });
+
+    // 📌 추가: 해당 항목으로 스크롤
+    targetItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
     </script>
 
 
@@ -471,13 +516,54 @@
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
                         <div class="sub-content">
                             <!-- 태양계 소개 본문 -->
-                            우리 태양계는 태양, 8개의 행성, ... (본문 내용)
+                            우리 태양계는 태양, 8개의 행성, 공식적으로 명명된 5개의 왜행성, 수백 개의 위성, 그리고 수천 개의 소행성과 혜성으로 구성되어 있습니다. 
+                            우리 태양계는 두 개의 큰 팔과 두 개의 작은 팔을 가진 막대 나선 은하인 우리 은하에 위치해 있습니다. 
+                            우리 태양은 궁수자리 팔과 페르세우스자리 팔 사이에 있는 오리온 팔 또는 오리온 돌기라고 불리는 우리 은하에서 아주 작은 부분에 위치해 있습니다. 
+                            우리 태양계는 은하 중심을 약 82만 8천 km/h의 속도로 공전합니다. 은하 중심을 한 바퀴 도는 데 약 2억 3천만 년이 걸립니다.
                         </div>
                     </div>
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양계의 탄생과 진화<span class="toggle-button">∨</span>
                         <div class="sub-content">
                             <!-- 태양계의 탄생 본문 -->
-                            태양계는 약 46억 년 전에 시작되었으며, 성운설에 따르면...
+                            <p>
+                                태양계는 약 46억 년 전에 시작되었다고 추정됩니다. 그리고 태양계 형성에 관한 여러 가지 이론 중 그 대표적인 것이 성운설이죠. 
+                                우리 은하의 나선 팔에서 먼지와 가스로 이루어진 구름이 중력붕괴를 일으키고, 이 구름들은 계속 해서 수축하며 밀도가 높아지게 돼요. 
+                                수축이 진행되면서 회전 속도가 빨라져 구름들은 원반 형태를 갖추게 되는 것이죠. 
+                                수축이 일정한 임계점에 도달하게 되면 중심부의 온도와 밀도가 높아져서 핵융합 반응을 일으키게 됩니다. 
+                                그 수축된 질량의 대부분이 모여 태양을 형성하고, 남은 것은 편평한 원시 태양계 원반을 형성하여 여기서 행성, 위성, 소행성과 
+                                그 밖의 태양계 소천체 등이 생기게 되는데, 이러한 과정을 설명하는 이론이 바로 성운설입니다.
+                            </p>
+                            <p>
+                                태양계는 초기의 모습에서 점점 진화해왔습니다. 가스나 우주먼지가 행성의 중력에 붙잡혀 위성이 탄생했으며, 
+                                천체끼리의 충돌도 계속되어 태양계 진화의 원동력이 되고 있습니다.
+                            </p>
+                            <p>
+                                앞으로 태양은 적색거성의 단계를 거쳐 바깥층은 떨어져 나가 행성상 성운이 되고, 중심부는 수축하여 백색왜성이 될 것이라고 예상된다고 합니다. 
+                                태양이 백색왜성이 되면 크기는 지구 정도이지만, 질량은 현재 태양과 비슷할 정도로 밀도가 높아지게 돼요. 
+                                백색왜성으로 진화한 태양은 더 이상 강한 중력을 발휘하지 못해, 행성들을 지금처럼 안정적으로 붙잡아 두기 어렵게 됩니다. 
+                                시간이 흐르면서 행성들은 궤도를 이탈하거나 우주의 다른 방향으로 흩어질 수 있으며, 결국 태양은 차갑고 작아진 채로 우주 공간에 홀로 남아 외롭게 빛을 잃어가게 될 것입니다.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양계의 구성<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <p>
+                                태양계는 나선 은하인 우리 은하의 나선의 팔 부분에 위치하고 있고, 태양을 중심으로 돌고 있는 
+                                수성, 금성, 지구, 화성, 목성, 토성, 천왕성, 해왕성의 8개의 행성과 세레스, 명왕성, 에리스 등의 왜소행성(Dwarf Planet) 및 
+                                각 행성들 주위를 돌고 있는 위성, 소행성, 그리고 혜성 등으로 이루어져 있습니다. 태양계 질량 중 약 99.85%를 태양이 차지하고 있으며, 
+                                행성들은 단지 약 0.135%밖에 되지 않아요. 그 외 질량은 위성, 소행성, 혜성 등이 차지하고 있습니다.
+                            </p>
+                            <p>
+                                우리 태양계의 행성과 다른 천체들의 순서와 배열은 태양계가 형성된 방식 때문입니다. 
+                                태양에 가장 가까운 행성은 태양계가 어렸을 때 열을 견딜 수 있는 암석질 물질뿐이었습니다. 
+                                이러한 이유로 처음 네 행성, 즉 수성, 금성, 지구, 화성은 지구형 행성입니다. 
+                                이 행성들은 모두 작고 단단하며 암석으로 된 표면을 가지고 있습니다.
+                            </p>
+                            <p>
+                                한편, 우리가 얼음, 액체, 기체로 알고 있던 물질들이 어린 태양계의 외곽 지역에 가라앉았습니다. 
+                                중력이 이 물질들을 하나로 모았고, 바로 그곳에서 우리는 목성과 토성 같은 가스 행성과 천왕성과 해왕성 
+                                같은 얼음 행성을 발견할 수 있습니다.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -573,14 +659,51 @@
                 <div class="sub-items">
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
                         <div class="sub-content">
-                            <!-- 태양 소개 본문 -->
-                            태양은 우리 태양계의 중심에 있는 별입니다...
+                            목성은 태양계의 5번째 행성으로, 태양계의 행성 중 가장 부피가 큰 거대한 기체 행성성입니다. 목성은 수소와 헬륨으로 이루어져 있고, 
+                            표면의 대기는 주로 메테인, 암모니아 가스로 이루어져 있죠.
                         </div>
                     </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 목성의 탄생과 진화<span class="toggle-button">∨</span>
                         <div class="sub-content">
-                            <!-- 태양의 탄생 본문 -->
-                            태양은 성운 수축으로 탄생했습니다...
+                            <p>
+                                목성은 약 46억 년 전, 태양 주변의 가스와 먼지 구름이 중력으로 응집되어 이루어졌을 것으로 추정돼요. 
+                                이후 목성은 작은 우주 자갈이나 소행성을 흡수하면서 성장하는 미세소행성 합체기에 접어들게 됩니다. 
+                                미세소행성 합체기가 끝나고 목성은 큰 소행성과 충돌하며 성장하는 느린 성장기를 거치면서 현재와 같은 
+                                거대한 규모를 가진 행성이 되는 진화 과정을 거쳤다고 알려져 있습니다.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 목성의 구성<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <p>
+                                목성은 내부에 압력으로 인해 액체화된 가스질 맨틀과, 지름만 28000km에 달하는 거대한 얼음-암석질 핵을 갖고 있어요. 
+                                목성의 강력한 중력과 자기장은 모두 이러한 거대한 핵과 맨틀로 이루어진 질량에서 나오는 것이며, 만약 목성이 가스만으로 이루어졌다면 
+                                이를 붙잡아 둘 구심점 없이 흩어졌을 거라고 추측하고 있어요. 
+                                즉, 현존하는 가스 행성들은 단지 가스가 많은 행성일 뿐이고, 가스가 많다는 것은 그 정도의 가스들을 붙잡는 무거운 핵이 내부에 존재한다는 뜻인거죠.
+                            </p>
+                            <p>
+                                목성의 행성 표면이 정확히 어떤지는 아직 불명이지만, 목성 내부의 엄청난 압력과 열로 인해 수소가 
+                                액체 금속의 형태를 띠는 액체 수소의 바다로 구성되어 있을 거라 추측됩니다. 지구 지름의 2배가 넘는 대기층 때문에 행성 내부에서는 당연히 태양과 우주를 볼 수 없으며, 
+                                칠흑 같은 암흑만이 가득할 거예요. 오직 빠른 자전과 물질 구성의 차이로 생겨난 것으로 추측되는 거대한 수소 구름의 흐름만을 볼 수 있을 것입니다.
+                            </p>
+                            <p>
+                                거기에 초속 수백 미터 이상의 태풍과 남아메리카만한 번개(얇은 번개 구조)가 끊임없이 쳐대고, 무지막지한 압력과 열, 지구의 2.5배나 되는 중력에, 
+                                몇 초만 쐬어도 즉사할 수준의 방사선에 지속적으로 피폭되는 것이 일상인 환경이라는 점 또한 예상할 수 있습니다. 
+                                당연히 지금까지 발견된 그 어떠한 생명체도 생존 불가한 무시무시한 환경이죠. 
+                                방사능 폭풍을 어떻게든 버티고 진입한다 쳐도 목성의 맨틀에 해당되는 수천 도의 뜨거운 액체 수소 바다가 나옵니다. 
+                                목성의 맨틀을 이루고 있는 만큼 이 바다의 깊이는 최소 40,000km로 추정되는데, 내부로 접근하면 할수록 어마어마한 압력까지 더해지고 이로 인해 
+                                지구의 내핵, 태양 표면보다도 더 뜨거워지기 때문에 획기적인 기술력 발전이 없는 한 아쉽게도 목성 내부 탐사는 불가능에 가깝다고 합니다.
+                            </p>
+                            <p>
+                                목성도 토성처럼 고리를 가지고 있다는 놀라운 사실을 알고 계셨나요? 사실은 목성형 행성인 목성, 토성, 천왕성, 해왕성 모두가 고리를 가지고 있습니다. 
+                                그러나 먼지가 대부분이며 그것조차 워낙 가늘고 희미하기 때문에 지상에서 관측해 봤자 토성 고리 같은 선명한 형체를 확인할 수 없을 뿐이죠. 
+                                그래서 오랜 기간 목성은 고리가 없다고 여겼지만 1979년 보이저 1호가 목성으로 근접하여 촬영하면서 고리의 존재를 확인하였다고 해요. 
+                                지금도 목성 고리는 허블 우주 망원경을 동원하지 않으면 관측하기가 굉장히 힘들다고 합니다.
+                                추가적으로 과거에는 고리가 1개 있는 걸로 여겼지만 현재는 추가로 발견하여 무려 총 3개라고 해요. 
+                                사실 고리 자체는 모든 목성형 행성들이 가지고 있지만 토성이 다른 목성형 행성에 비해 유별나게 큰 고리를 가지고 있어서 부각되는 것입니다. 
+                                토성을 제외하고 그나마 큰 고리가 있는 건 천왕성 정도죠. 수십 억 년 뒤면 해왕성의 위성인 트리톤이 해왕성 로슈 한계 안쪽으로 진입해서 
+                                산산조각 날 예정이라 토성 고리와는 비교도 안 될 정도로 큰 고리를 형성할 것이라고 예상하고 있습니다.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -976,16 +1099,16 @@
         </script>        
     </section>
     <aside class = "aside" ><!--버튼-->
-        <button onclick="change_planet_selection(0)">0. 태양계</button>
-        <button onclick="change_planet_selection(1)">1. 태양</button>
-        <button onclick="change_planet_selection(2)">2. 수성</button>
-        <button onclick="change_planet_selection(3)">3. 금성</button>
-        <button onclick="change_planet_selection(4)">4. 지구</button>
-        <button onclick="change_planet_selection(5)">5. 화성</button>
-        <button onclick="change_planet_selection(6)">6. 목성</button>
-        <button onclick="change_planet_selection(7)">7. 토성</button>
-        <button onclick="change_planet_selection(8)">8. 천왕성</button>
-        <button onclick="change_planet_selection(9)">9. 혜왕성</button>
+        <button onclick="open_nav_item(0); change_planet_selection(0)">0. 태양계</button>
+        <button onclick="open_nav_item(1); change_planet_selection(1)">1. 태양</button>
+        <button onclick="open_nav_item(2); change_planet_selection(2)">2. 수성</button>
+        <button onclick="open_nav_item(3); change_planet_selection(3)">3. 금성</button>
+        <button onclick="open_nav_item(4); change_planet_selection(4)">4. 지구</button>
+        <button onclick="open_nav_item(5); change_planet_selection(5)">5. 화성</button>
+        <button onclick="open_nav_item(6); change_planet_selection(6)">6. 목성</button>
+        <button onclick="open_nav_item(7); change_planet_selection(7)">7. 토성</button>
+        <button onclick="open_nav_item(8); change_planet_selection(8)">8. 천왕성</button>
+        <button onclick="open_nav_item(9); change_planet_selection(9)">9. 해왕성</button>
     </aside>
     <footer class = "footer"><!--참고 사이트, 출처, 조원-->
         <div id = "info" class= "font_nanum"> 제작자 :김민재(MinJae Kim), 문찬우(ChanWoo Moon), 임태민(TaeMin Lim)
