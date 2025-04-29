@@ -4,12 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-  
+    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-barun-pen.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background: url('https://cdn.pixabay.com/photo/2023/01/24/23/20/universe-7742159_1280.jpg') no-repeat center center/cover;
+            background-color: #000;
+            overflow: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        #shooting-star-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* 3D 태양계 캔버스보다 아래쪽 */
+            pointer-events: none;
+        }
+        canvas#c {
+            position: relative;
+            z-index: 2; /* 별똥별 위에 표시 */
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        aside button {
+            font-family: NanumBarunPen;
+            margin: 10px;
+            padding: 10px 20px;
+            width:103px;
+            font-size: 16px;
+            background: rgba(255,255,255,0.8);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+    
+    <script>
+    window.addEventListener('load', () => {
+        // 별똥별용 캔버스 추가
+        const canvas = document.createElement('canvas');
+        canvas.id = 'shooting-star-canvas';
+        document.body.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+    
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+    
+        class ShootingStar {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width * 0.8;
+                this.y = Math.random() * canvas.height * 0.3;
+                this.speed = 6 + Math.random() * 4;
+                this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.05;
+                this.opacity = 1;
+                this.trail = [];
+                this.maxTrail = 30;
+                this.delayTrail = 5;
+                this.frames = 0;
+            }
+            update() {
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+                this.frames++;
+                if (this.frames > this.delayTrail) {
+                    this.trail.push({ x: this.x, y: this.y, opacity: this.opacity });
+                    if (this.trail.length > this.maxTrail) this.trail.shift();
+                }
+                this.opacity -= 0.004;
+                if (this.opacity <= 0) this.dead = true;
+            }
+            draw(ctx) {
+                for (let i = 0; i < this.trail.length; i++) {
+                    const t = this.trail[i];
+                    const grad = ctx.createLinearGradient(t.x, t.y, t.x - 50, t.y - 50);
+                    grad.addColorStop(0, `rgba(255,255,255,${t.opacity * 0.3})`);
+                    grad.addColorStop(1, `rgba(255,255,255,0)`);
+                    ctx.strokeStyle = grad;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(t.x, t.y);
+                    ctx.lineTo(t.x - 50, t.y - 50);
+                    ctx.stroke();
+                }
+            }
+        }
+    
+        let stars = [];
+    
+        function createShootingStars() {
+            for (let i = 0; i < 4; i++) {
+                stars.push(new ShootingStar());
+            }
+        }
+    
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => {
+                star.update();
+                star.draw(ctx);
+            });
+            stars = stars.filter(star => !star.dead);
+            requestAnimationFrame(animate);
+        }
+        animate();
+    
+        // ⭐️ aside 안의 버튼들 클릭할 때 별똥별 + 소리
+        const shootingSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_e8b5d15ce7.mp3?filename=shooting-star-104854.mp3');
+    
+        document.querySelectorAll('aside button').forEach(button => {
+            button.addEventListener('click', () => {
+                createShootingStars();
+                shootingSound.currentTime = 0;
+                shootingSound.play().catch(e => console.log('Audio play error:', e));
+            });
+        });
+    });
+    </script>
 
     <script id = "vertex-shader" type="x-shader/x-vertex">
         attribute vec4 a_position_v4;
-        attribute vec4 a_color_v4;
-        attribute vec2 a_texcoord_v2;
 
         uniform mat4 u_scale_m4;
         uniform mat4 u_rotate_m4;
@@ -18,15 +144,12 @@
         uniform mat4 u_view_m4;
 
         uniform mat4 u_proj_m4; 
-
-        varying vec4 v_color_v4;
         varying vec4 v_pos_v4;
-        varying vec2 v_texcoord_v2;
+      
 
         void main()
         {
-            v_color_v4 = a_color_v4;
-
+         
             vec4 pos= a_position_v4;
            
             v_pos_v4 = pos;
@@ -40,9 +163,7 @@
     </script>
     <script id = "fragment-shader" type="x-shader/x-fragment">
         precision mediump float;
-        varying vec4 v_color_v4;
         varying vec4 v_pos_v4;
-        varying vec2 v_texcoord_v2;
         uniform sampler2D u_texture_s2D;
 
       
@@ -160,6 +281,28 @@
 
 
     }
+      // nav 요소 관련 코드(by 태민)
+    function toggleItem(event, element) {
+        event.stopPropagation();
+        const subItems = element.querySelector('.sub-items');
+        const button = element.querySelector('.toggle-button');
+        if (!subItems) return;
+        const isOpen = subItems.style.display === 'block';
+        subItems.style.display = isOpen ? 'none' : 'block';
+        button.textContent = isOpen ? '∨' : '∧';
+        element.style.opacity = isOpen ? 0.5 : 1;
+    }
+
+    function toggleSubItem(event, element) {
+        event.stopPropagation();
+        const subContent = element.querySelector('.sub-content');
+        const button = element.querySelector('.toggle-button');
+        if (!subContent) return;
+        const isOpen = subContent.style.display === 'block';
+        subContent.style.display = isOpen ? 'none' : 'block';
+        button.textContent = isOpen ? '∨' : '∧';
+        element.style.opacity = isOpen ? 0.7 : 1;
+    }
    
    
     </script>
@@ -186,26 +329,32 @@
             background-repeat: no-repeat;
             background-size: cover;
             padding-top : calc (300 / 1000 * 100%);
+            margin:0;
         }
         .header {
-            width: 100%; height: 15%;
+            width: 100%; height: 10%;
+            position:relative;
         }
         .nav {
-            width: 15%; height: 70%; float: left;
+            width: 22%; height: 80%; float: left;
             overflow:scroll;
             color: white;
+            background: rgba(0, 0, 0, 0.5);
+            counter-reset: nav-counter;
         }
         .section {
-            width: 70%; height: 70%; float: left;
+            width: 70%; height: 80%; float: left;
          
         }
         .aside {
-            width: 15%; height: 70%; float: left;
-            overflow:scroll;
+            width: 8%; height: 80%; float: left;
+            overflow-x:hidden;
+            overflow-y:scroll;
             color: white;
+          
         }
         .footer {
-            width: 100%; height: 15%; clear: both;
+            width: 100%; height: 10%; clear: both;
         }
         .nav, .aside {
             overflow: auto;
@@ -248,49 +397,245 @@
             width: 100%;
             height: 100%;
         }
+         /* nav 구현 관련 코드(by 태민 04/27)*/
+        .nav-item {
+            cursor: pointer;
+            padding: 8px;
+            margin: 4px 0;
+            font-size: 16px;
+            transition: opacity 0.3s;
+            opacity: 0.5;
+            position: relative;
+            counter-increment: nav-counter;
+        }
+        .nav-item::before {
+            content: counter(nav-counter) ". ";
+            position: absolute;
+            left: -25px;
+        }
+        .sub-items {
+            margin-left: 20px;
+            display: none;
+            flex-direction: column;
+        }
+        .sub-item {
+            padding: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .sub-content {
+            display: none;
+            margin-left: 20px;
+            padding: 6px;
+            font-size: 13px;
+            color: #ccc;
+        }
+        .toggle-button {
+            margin-left: 8px;
+            font-size: 14px;
+        }
+        /* nav 구현 관련 코드 */
+
+
+        
+        .font_nanum{
+            font-family: NanumBarunPen;
+            color: white;
+        }
+
+        #site_title
+        {
+           
+           width: 500px;
+           position: absolute;
+           margin-left: 2%;
+          
+        }
+
+        #info{
+            float: right;
+            margin-right: 2%;
+            font-size: 20px;
+        }
 
     </style>
 </head>
 <body>
-    <header class = "header"><!--제목--></header>
-    <nav class = "nav"><!--설명-->
-        1.	태양계
--	소개
-우리 태양계는 태양, 8개의 행성, 공식적으로 명명된 5개의 왜행성, 수백 개의 위성, 그리고 수천 개의 소행성과 혜성으로 구성되어 있습니다. 우리 태양계는 두 개의 큰 팔과 두 개의 작은 팔을 가진 막대 나선 은하인 우리 은하에 위치해 있습니다.  우리 태양은 궁수자리 팔과 페르세우스자리 팔 사이에 있는 오리온 팔 또는 오리온 돌기라고 불리는 우리 은하에서 아주 작은 부분에 위치해 있습니다. 우리 태양계는 은하 중심을 약 82만 8천 km/h의 속도로 공전합니다. 은하 중심을 한 바퀴 도는 데 약 2억 3천만 년이 걸립니다.
-
--	태양계의 탄생과 진화
-태양계는 약 46억 년 전에 시작되었다고 추정됩니다. 그리고 태양계 형성에 관한 여러 가지 이론 중 그 대표적인 것이 성운설이죠. 우리 은하의 나선 팔에서 먼지와 가스로 이루어진 구름이 중력붕괴를 일으키고, 이 구름들은 계속 해서 수축하며 밀도가 높아지게 돼요. 수축이 진행되면서 회전 속도가 빨라져 구름들은 원반 형태를 갖추게 되는 것이죠. 수축이 일정한 임계점에 도달하게 되면 중심부의 온도와 밀도가 높아져서 핵융합 반응을 일으키게 됩니다. 그 수축된 질량의 대부분이 모여 태양을 형성하고, 남은 것은 편평한 원시 태양계 원반을 형성하여 여기서 행성, 위성, 소행성과 그 밖의 태양계 소천체 등이 생기게 되는데, 이러한 과정을 설명하는 이론이 바로 성운설입니다.
- 태양계는 초기의 모습에서 점점 진화해왔습니다. 가스나 우주먼지가 행성의 중력에 붙잡혀 위성이 탄생했으며, 천체끼리의 충돌도 계속되어 태양계 진화의 원동력이 되고 있습니다.
- 앞으로 태양은 적색거성의 단계를 거쳐 바깥층은 떨어져 나가 행성상 성운이 되고, 중심부는 수축하여 백색왜성이 될 것이라고 예상된다고 합니다. 태양이 백색왜성이 되면 크기는 지구 정도이지만, 질량은 현재 태양과 비슷할 정도로 밀도가 높아지게 돼요. 백색왜성으로 진화한 태양은 더 이상 강한 중력을 발휘하지 못해, 행성들을 지금처럼 안정적으로 붙잡아 두기 어렵게 됩니다. 시간이 흐르면서 행성들은 궤도를 이탈하거나 우주의 다른 방향으로 흩어질 수 있으며, 결국 태양은 차갑고 작아진 채로 우주 공간에 홀로 남아 외롭게 빛을 잃어가게 될 것입니다.
-
--	태양계의 구성
-태양계는 나선 은하인 우리 은하의 나선의 팔 부분에 위치하고 있고, 태양을 중심으로 돌고 있는 수성, 금성, 지구, 화성, 목성, 토성, 천왕성, 해왕성의 8개의 행성과 세레스, 명왕성, 에리스 등의 왜소행성(Dwarf Planet) 및 각 행성들 주위를 돌고 있는 위성, 소행성, 그리고 혜성 등으로 이루어져 있습니다. 태양계 질량 중 약 99.85%를 태양이 차지하고 있으며, 행성들은 단지 약 0.135%밖에 되지 않아요. 그 외 질량은 위성, 소행성, 혜성 등이 차지하고 있습니다.
-우리 태양계의 행성과 다른 천체들의 순서와 배열은 태양계가 형성된 방식 때문입니다. 태양에 가장 가까운 행성은 태양계가 어렸을 때 열을 견딜 수 있는 암석질 물질뿐이었습니다. 이러한 이유로 처음 네 행성, 즉 수성, 금성, 지구, 화성은 지구형 행성입니다. 이 행성들은 모두 작고 단단하며 암석으로 된 표면을 가지고 있습니다.
-한편, 우리가 얼음, 액체, 기체로 알고 있던 물질들이 어린 태양계의 외곽 지역에 가라앉았습니다. 중력이 이 물질들을 하나로 모았고, 바로 그곳에서 우리는 목성과 토성 같은 가스 행성과 천왕성과 해왕성 같은 얼음 행성을 발견할 수 있습니다.
-
--	태양계의 규모
- 태양에서 지구까지의 거리는 약 1억5천만km입니다. 이 거리는 빛으로도 8분이 넘는 시간동안 달려야 도착할 수 있는 거리이기도 하죠. 그럼 태양계의 크기는 얼마나 될까요? 해왕성이 태양계의 마지막 행성이기 때문에 그 곳이 끝이고, 따라서 태양과 해왕성의 거리 약 46억km가 태양계의 반지름이라고 생각할 수 있어요. 하지만 그보다 멀리 카이퍼 벨트와 오르트 구름의 발견으로 인하여 태양계는 우리의 생각보다 훨씬 거대했습니다.
- 단주기 혜성의 출발지로 알려져 있는 카이퍼 벨트는 해왕성 외부에서부터 약 1000AU(약 1천500억km정도)이상에 퍼져 있다고 합니다. 그리고 오르트 구름에서 출발했을 것으로 예상되어지는 장주기 혜성의 궤도 반지름은 3000AU 내지 10만AU입니다. 이는 빛으로도 약 1.6년을 가야 하는 어마어마한 거리죠. 이렇게 본다면 태양계의 크기는 인근별의 오르트 구름과도 겹쳐질 수도 있을 정도로 거대하다고 볼 수 있습니다.
-
-2.	태양
--	소개
- 태양은 우리 태양계의 중심에 있는 별입니다. 태양의 중력은 태양계를 지탱하며, 가장 큰 행성부터 가장 작은 파편 입자까지 모든 것을 궤도에 유지합니다. 태양과 지구의 연결과 상호작용은 계절, 해류, 날씨, 기후, 복사대, 그리고 오로라를 만들어냅니다. 태양은 태양계에 있는 모든 생명체에게 있어서 어머니와 같은 천체예요. 사실상 인간이 사용하는 모든 연료는 그 근원이 태양으로부터 받은 에너지이며 여덟 개의 행성은 물론 그 위성들과, 소행성 그리고 수많은 혜성 등 태양계의 전 가족이 태양에너지를 받아 제 모습을 유지하고 있는 것이죠. 태양의 무게는 지구 질량의 33만 배에 이르며 모든 행성들을 합쳐 놓은 질량의 750배 이상으로 태양계의 전체 질량의 99.85%를 차지합니다. 태양이 우리에게는 특별한 존재이지만, 태양은 태양계 내에서 스스로 빛을 내는 유일한 천체이지만 전 우주로 따지면 태양도 하나의 항성(별)에 불과하고, 우리 은하에는 우리 태양과 같은 별들이 수십억 개나 흩어져 있습니다.
-
--	태양의 구성과 규모
-태양은 태양계에서 가장 큰 천체입니다. 지름은 약 140만 킬로미터(865,000마일)입니다. 태양의 중력은 태양계를 하나로 묶어주어, 가장 큰 행성부터 가장 작은 파편까지 모든 것을 태양 주위를 공전합니다.
-우리 태양은 반지름이 약 70만 킬로미터(43만 5천 마일)인 중간 크기의 별입니다. 많은 별들이 훨씬 더 크지만, 태양은 우리 지구보다 훨씬 더 무겁습니다. 태양의 질량과 맞먹으려면 지구가 33만 개 이상이 필요하고, 태양의 부피를 채우려면 지구 130만 개가 필요하죠.
-태양은 지구에서 약 9,300만 마일(1억 5천만 킬로미터) 떨어져 있습니다. 가장 가까운 이웃 항성계는 알파 센타우리 삼중성계입니다. 적색 왜성 프록시마 센타우리는 4.24광년 떨어져 있고, 서로 공전하는 태양과 비슷한 두 별인 알파 센타우리 A와 B는 4.37광년 떨어져 있습니다. 1광년은 빛이 1년 동안 이동하는 거리로, 약 6조 마일(9.5조 킬로미터)에 해당합니다.
-태양의 표층은 표면과 대기로 구성돼 있는데 우리가 매일 볼 수 있는 태양의 표면이 '광구'이고 광구를 둘러싸고 있는 대기 중 하층대기가 '채층', 상층대기는 '코로나'입니다. 먼저, 광구를 살펴보면 쌀알을 뿌려 놓은 것과 비슷한 모습을 볼 수 있습니다. 이것은 쌀알무늬(쌀알조직)라 하며, 광구 밑의 대류지역에서 기체 거품이 상승하거나 하강하는 운동 때문에 나타납니다.
- 광구위의 채층은 온도가 광구보다 높아 약 1만도 정도 되는데 이곳에서는 뜨거운 가스가 태양 표면으로부터 약 1만 km이상의 높이까지 치솟는 홍염을 볼 수가 있습니다. 그리고 채층은 광구와 코로나 사이에 놓여 경계선 구실을 하기도 합니다.
- 채층 밖에 있는 코로나는 태양의 광구주위에 희박한 밀도의 이온화된 기체로 가장 높이, 넓게 퍼져 있는 상층 대기권입니다. 코로나의 형태와 크기는 일정하지 않지만 일반적으로 흑점과 관계가 깊죠. 흑점이 최소일 때 코로나의 크기는 작고 최대일 때는 크고 밝으며 매우 복잡한 구조를 갖는데, 태양의 채층과 코로나는 광구의 빛이 달에 의해 완전히 차단되는 개기일식 때에만 볼 수 있습니다. 태양의 가장자리로부터
-태양에서 가장 뜨거운 부분은 핵으로, 온도가 1,500만 °C(2,700만 °F)를 넘습니다. 우리가 태양 표면이라고 부르는 광구는 비교적 차가운 5,500 °C(10,000 °F)입니다. 태양의 가장 큰 미스터리 중 하나는 태양의 외기권인 코로나가 표면에서 멀어질수록 더 뜨거워진다는 것입니다. 코로나의 온도는 최대 200만 °C(350만 °F)에 달하는데, 이는 광구보다 훨씬 더 높습니다.
-
--	태양의 궤도와 자전
-태양도 지구와 같이 특정 궤도로 공전하고, 스스로 자전하고 있다는 사실을 알고 계셨나요? 태양은 우리 은하의 중심을 공전하며, 행성, 소행성, 혜성, 그리고 태양계의 다른 천체들을 끌어당깁니다. 우리 태양계는 평균 시속 450,000마일(시속 720,000킬로미터)의 속도로 움직이고 있습니다. 하지만 이 속도에서도 태양이 우리 은하를 한 바퀴 완전히 도는 데는 약 2억 3천만 년이 걸립니다.
-태양은 은하계를 공전하며 자전축을 중심으로 자전합니다. 자전축은 행성 궤도면에 대해 7.25도 기울어져 있어요. 태양은 고체가 아니기 때문에 각 부분이 서로 다른 속도로 자전합니다. 적도에서는 태양이 약 25일마다 한 바퀴 자전하지만, 극지방에서는 36일마다 한 바퀴 자전합니다.
-
-출처: 한국천문연구원 천문우주지식정보 (https://astro.kasi.re.kr), 2025년 4월 12일 기준
-출처: NASA 태양계 탐사(Solar System Exploration) (https://solarsystem.nasa.gov), 2025년 4월 12일 기준
+    <header class = "header">
+        <h1 id = "site_title" class = "font_nanum" >우주의 창, 태양계 이야기</h1>
+    </header>
+        <nav class="nav font_nanum">
+            <div class="nav-item" onclick="toggleItem(event, this)">0. 태양계<span class="toggle-button">∨</span>
+                <div class="sub-items">
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양계 소개 본문 -->
+                            우리 태양계는 태양, 8개의 행성, ... (본문 내용)
+                        </div>
+                    </div>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양계의 탄생과 진화<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양계의 탄생 본문 -->
+                            태양계는 약 46억 년 전에 시작되었으며, 성운설에 따르면...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- 다른 행성들도 같은 구조로 반복 -->
+            <div class="nav-item" onclick="toggleItem(event, this)">1. 태양<span class="toggle-button">∨</span>
+                <div class="sub-items">
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양 소개 본문 -->
+                            태양은 우리 태양계의 중심에 있는 별입니다...
+                        </div>
+                    </div>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양의 탄생 본문 -->
+                            태양은 성운 수축으로 탄생했습니다...
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="nav-item" onclick="toggleItem(event, this)">2. 수성<span class="toggle-button">∨</span>
+                <div class="sub-items">
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양 소개 본문 -->
+                            태양은 우리 태양계의 중심에 있는 별입니다...
+                        </div>
+                    </div>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양의 탄생 본문 -->
+                            태양은 성운 수축으로 탄생했습니다...
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="nav-item" onclick="toggleItem(event, this)">3. 금성<span class="toggle-button">∨</span>
+                <div class="sub-items">
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양 소개 본문 -->
+                            태양은 우리 태양계의 중심에 있는 별입니다...
+                        </div>
+                    </div>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양의 탄생 본문 -->
+                            태양은 성운 수축으로 탄생했습니다...
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="nav-item" onclick="toggleItem(event, this)">4. 지구<span class="toggle-button">∨</span>
+                <div class="sub-items">
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양 소개 본문 -->
+                            태양은 우리 태양계의 중심에 있는 별입니다...
+                        </div>
+                    </div>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양의 탄생 본문 -->
+                            태양은 성운 수축으로 탄생했습니다...
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="nav-item" onclick="toggleItem(event, this)">5. 화성<span class="toggle-button">∨</span>
+                <div class="sub-items">
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양 소개 본문 -->
+                            태양은 우리 태양계의 중심에 있는 별입니다...
+                        </div>
+                    </div>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양의 탄생 본문 -->
+                            태양은 성운 수축으로 탄생했습니다...
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="nav-item" onclick="toggleItem(event, this)">6. 목성<span class="toggle-button">∨</span>
+                <div class="sub-items">
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양 소개 본문 -->
+                            태양은 우리 태양계의 중심에 있는 별입니다...
+                        </div>
+                    </div>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양의 탄생 본문 -->
+                            태양은 성운 수축으로 탄생했습니다...
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="nav-item" onclick="toggleItem(event, this)">7. 토성<span class="toggle-button">∨</span>
+                <div class="sub-items">
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양 소개 본문 -->
+                            태양은 우리 태양계의 중심에 있는 별입니다...
+                        </div>
+                    </div>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양의 탄생 본문 -->
+                            태양은 성운 수축으로 탄생했습니다...
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="nav-item" onclick="toggleItem(event, this)">8. 천왕성<span class="toggle-button">∨</span>
+                <div class="sub-items">
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양 소개 본문 -->
+                            태양은 우리 태양계의 중심에 있는 별입니다...
+                        </div>
+                    </div>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양의 탄생 본문 -->
+                            태양은 성운 수축으로 탄생했습니다...
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="nav-item" onclick="toggleItem(event, this)">9. 해왕성<span class="toggle-button">∨</span>
+                <div class="sub-items">
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양 소개 본문 -->
+                            태양은 우리 태양계의 중심에 있는 별입니다...
+                        </div>
+                    </div>
+                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                        <div class="sub-content">
+                            <!-- 태양의 탄생 본문 -->
+                            태양은 성운 수축으로 탄생했습니다...
+                        </div>
+                    </div>
+                </div>
+            </div>
     </nav>
     <section class = "section">
         <canvas id = "c"  ></canvas>
@@ -388,7 +733,11 @@
     
             }
     
-    
+            var plnaet_seletion = 0;
+            function change_planet_selection(num) 
+            {
+                plnaet_seletion = num;
+            }
     
     
           
@@ -397,8 +746,8 @@
               
     
             var canvas = document.querySelector("#c");
-            canvas.setAttribute("width", window.innerWidth);
-            canvas.setAttribute("height", window.innerHeight);
+            canvas.setAttribute("width", window.innerWidth*2);
+            canvas.setAttribute("height", window.innerHeight*2);
 
          
             var gl = canvas.getContext("webgl");
@@ -410,9 +759,7 @@
     
             var w = canvas.width;
             var aPos_loc_v4f = gl.getAttribLocation(program , "a_position_v4");
-            var aColor_loc_v4f = gl.getAttribLocation(program , "a_color_v4");
-            var aTex_loc_v2f = gl.getAttribLocation(program, "a_texcoord_v2");
-    
+
             var u_trans_loc_m4f = gl.getUniformLocation(program, "u_translate_m4")
             var u_rotate_loc_m4f = gl.getUniformLocation(program , "u_rotate_m4");
             var u_scale_loc_m4f = gl.getUniformLocation(program , "u_scale_m4");
@@ -431,12 +778,10 @@
             }
             var sphere_object = new sphere();  // origin_sphere
             sphere_object.gen_sphere(6 ,cube , 144);
+            console.log(sphere_object.sphere_vbo.length);
+            console.log(sphere_object.sphere_vbo_len);
     
-    
-    
-    
-    
-    
+
     
     
     
@@ -460,8 +805,9 @@
             planet[6] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/planet_6.jpg");
             planet[7] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/planet_7.jpg");
     
-            var center_planet = sun;
-    
+            var center_planet = init_sphere(gl ,sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/sun.jpg");
+          
+
             var solar_system_ratio = (planets_distance[7]*214);
         
             var solar_system_distance_scale = 0.0;
@@ -482,25 +828,27 @@
                 planet[i].pos_v4f[2]  = y;
     
             }
-    
+            center_planet.pos_v4f = sun.pos_v4f;
+            center_planet.scale_v4f = sun.scale_v4f;
             //0 all solar system 1 sun 2....
-            var plnaet_seletion = 0;
+           
             var view_cam_radius = 210;
-          
+       
             select_planet(plnaet_seletion);
                
             function select_planet(num)
             {
+                plnaet_seletion = num;
                
                 if(num == 0)
                 {   
                     view_cam_radius = 210;
-                    center_planet = sun;
+                    center_planet.sphere_texture_info = sun.sphere_texture_info;
                 }
                 else if(num == 1)
                 {
                     view_cam_radius = 100;
-                    center_planet = sun;   
+                    center_planet.sphere_texture_info = sun.sphere_texture_info;
                 }
                 else if(num >= 2 && num <= 9)
                 {
@@ -519,19 +867,12 @@
     
     
     
-    
-           
-           
-            var view_cam_pos_v4f = [0 ,  Math.sin(PI / 180 * 30) * view_cam_radius,  Math.cos(PI / 180 * 30) * view_cam_radius , 1];
-            var view_cam_up_v4f = [0 , 1 , 0, 1];
-            var view_cam_at_v4f = [0 , 0 , 0 , 1]
-            var angle = 0;
-            gl.viewport(0, 0, window.innerWidth, window.innerHeight);
+         
+            gl.viewport(0, 0, window.innerWidth*2, window.innerHeight*2);
             gl.enable(gl.CULL_FACE);
             gl.enable(gl.DEPTH_TEST);
     
-            
-            
+             
             var earth_rot = (PI/180 * 1) *  (1/60) * 6 * 365 * 0.3; 
             var earth_orbit = (PI/180 * 1) *  (1/60) * 6 * 2;
     
@@ -543,28 +884,30 @@
     
                 const cam_object = new view_cam();
                 const screen_object = new proj_screen();
-              
+                
+                select_planet(plnaet_seletion);
+                var view_cam_pos_v4f = [0 ,  Math.sin(PI / 180 * 30) * view_cam_radius,  Math.cos(PI / 180 * 30) * view_cam_radius , 1];
+                var view_cam_up_v4f = [0 , 1 , 0, 1];
+                var view_cam_at_v4f = [0 , 0 , 0 , 1]
+                var angle = 0;
+
+
                
                 gl.clear(gl.COLOR_BUFFER_BIT);
                 gl.clearDepth(-1);
+
+             
     
                 cam_object.look_at_LH(view_cam_pos_v4f , view_cam_at_v4f , view_cam_up_v4f);
-                screen_object.perspective_fov_LH(PI/180 * 60 , window.innerWidth/window.innerHeight , 1 , 500.0 );
+                screen_object.perspective_fov_LH(PI/180 * 60 , window.innerWidth/window.innerHeight - 0.07 , 1 , 500.0 );
                 gl.uniformMatrix4fv(u_view_loc_m4f, 0,  cam_object.view_mat4);
                 gl.uniformMatrix4fv(u_proj_loc_m4f, 0, screen_object.proj_mat4);
     
                 
-                sphere_object.rot_v4f[3] += (1/60 * 365) / 1000;
-                theta = (1/60) / 10;
-                x =  sphere_object.pos_v4f[0] * Math.cos(earth_orbit) -  sphere_object.pos_v4f[2] * Math.sin(earth_orbit); 
-                y =  sphere_object.pos_v4f[0] * Math.sin(earth_orbit) +  sphere_object.pos_v4f[2] * Math.cos(earth_orbit); 
-                sphere_object.pos_v4f[0]  = x;
-                sphere_object.pos_v4f[2]  = y;
-    
-    
-        
+                center_planet.rot_v4f[3] += (1/60 * 365) / 5000; 
                
                 draw_sphere(gl,center_planet);
+                
                 if(plnaet_seletion == 0)
                 {
                     for(var i = 0; i < 8; i++)
@@ -621,7 +964,7 @@
     
                 gl.bindTexture(gl.TEXTURE_2D , draw_sphere.sphere_texture_info.texture );
                 gl.bindBuffer(gl.ARRAY_BUFFER , draw_sphere.sphere_vbo_id);
-                gl.drawArrays(gl.TRIANGLES , 0, draw_sphere.sphere_vbo_len);
+                gl.drawArrays(gl.TRIANGLES , 0, draw_sphere.sphere_vbo_len/4);
           
             }
          
@@ -630,53 +973,25 @@
            
             
             main();
-        </script>
-
-
-
-
-        
+        </script>        
     </section>
-    <aside class = "aside"><!--버튼-->
-        1.	태양계
--	소개
-우리 태양계는 태양, 8개의 행성, 공식적으로 명명된 5개의 왜행성, 수백 개의 위성, 그리고 수천 개의 소행성과 혜성으로 구성되어 있습니다. 우리 태양계는 두 개의 큰 팔과 두 개의 작은 팔을 가진 막대 나선 은하인 우리 은하에 위치해 있습니다.  우리 태양은 궁수자리 팔과 페르세우스자리 팔 사이에 있는 오리온 팔 또는 오리온 돌기라고 불리는 우리 은하에서 아주 작은 부분에 위치해 있습니다. 우리 태양계는 은하 중심을 약 82만 8천 km/h의 속도로 공전합니다. 은하 중심을 한 바퀴 도는 데 약 2억 3천만 년이 걸립니다.
-
--	태양계의 탄생과 진화
-태양계는 약 46억 년 전에 시작되었다고 추정됩니다. 그리고 태양계 형성에 관한 여러 가지 이론 중 그 대표적인 것이 성운설이죠. 우리 은하의 나선 팔에서 먼지와 가스로 이루어진 구름이 중력붕괴를 일으키고, 이 구름들은 계속 해서 수축하며 밀도가 높아지게 돼요. 수축이 진행되면서 회전 속도가 빨라져 구름들은 원반 형태를 갖추게 되는 것이죠. 수축이 일정한 임계점에 도달하게 되면 중심부의 온도와 밀도가 높아져서 핵융합 반응을 일으키게 됩니다. 그 수축된 질량의 대부분이 모여 태양을 형성하고, 남은 것은 편평한 원시 태양계 원반을 형성하여 여기서 행성, 위성, 소행성과 그 밖의 태양계 소천체 등이 생기게 되는데, 이러한 과정을 설명하는 이론이 바로 성운설입니다.
- 태양계는 초기의 모습에서 점점 진화해왔습니다. 가스나 우주먼지가 행성의 중력에 붙잡혀 위성이 탄생했으며, 천체끼리의 충돌도 계속되어 태양계 진화의 원동력이 되고 있습니다.
- 앞으로 태양은 적색거성의 단계를 거쳐 바깥층은 떨어져 나가 행성상 성운이 되고, 중심부는 수축하여 백색왜성이 될 것이라고 예상된다고 합니다. 태양이 백색왜성이 되면 크기는 지구 정도이지만, 질량은 현재 태양과 비슷할 정도로 밀도가 높아지게 돼요. 백색왜성으로 진화한 태양은 더 이상 강한 중력을 발휘하지 못해, 행성들을 지금처럼 안정적으로 붙잡아 두기 어렵게 됩니다. 시간이 흐르면서 행성들은 궤도를 이탈하거나 우주의 다른 방향으로 흩어질 수 있으며, 결국 태양은 차갑고 작아진 채로 우주 공간에 홀로 남아 외롭게 빛을 잃어가게 될 것입니다.
-
--	태양계의 구성
-태양계는 나선 은하인 우리 은하의 나선의 팔 부분에 위치하고 있고, 태양을 중심으로 돌고 있는 수성, 금성, 지구, 화성, 목성, 토성, 천왕성, 해왕성의 8개의 행성과 세레스, 명왕성, 에리스 등의 왜소행성(Dwarf Planet) 및 각 행성들 주위를 돌고 있는 위성, 소행성, 그리고 혜성 등으로 이루어져 있습니다. 태양계 질량 중 약 99.85%를 태양이 차지하고 있으며, 행성들은 단지 약 0.135%밖에 되지 않아요. 그 외 질량은 위성, 소행성, 혜성 등이 차지하고 있습니다.
-우리 태양계의 행성과 다른 천체들의 순서와 배열은 태양계가 형성된 방식 때문입니다. 태양에 가장 가까운 행성은 태양계가 어렸을 때 열을 견딜 수 있는 암석질 물질뿐이었습니다. 이러한 이유로 처음 네 행성, 즉 수성, 금성, 지구, 화성은 지구형 행성입니다. 이 행성들은 모두 작고 단단하며 암석으로 된 표면을 가지고 있습니다.
-한편, 우리가 얼음, 액체, 기체로 알고 있던 물질들이 어린 태양계의 외곽 지역에 가라앉았습니다. 중력이 이 물질들을 하나로 모았고, 바로 그곳에서 우리는 목성과 토성 같은 가스 행성과 천왕성과 해왕성 같은 얼음 행성을 발견할 수 있습니다.
-
--	태양계의 규모
- 태양에서 지구까지의 거리는 약 1억5천만km입니다. 이 거리는 빛으로도 8분이 넘는 시간동안 달려야 도착할 수 있는 거리이기도 하죠. 그럼 태양계의 크기는 얼마나 될까요? 해왕성이 태양계의 마지막 행성이기 때문에 그 곳이 끝이고, 따라서 태양과 해왕성의 거리 약 46억km가 태양계의 반지름이라고 생각할 수 있어요. 하지만 그보다 멀리 카이퍼 벨트와 오르트 구름의 발견으로 인하여 태양계는 우리의 생각보다 훨씬 거대했습니다.
- 단주기 혜성의 출발지로 알려져 있는 카이퍼 벨트는 해왕성 외부에서부터 약 1000AU(약 1천500억km정도)이상에 퍼져 있다고 합니다. 그리고 오르트 구름에서 출발했을 것으로 예상되어지는 장주기 혜성의 궤도 반지름은 3000AU 내지 10만AU입니다. 이는 빛으로도 약 1.6년을 가야 하는 어마어마한 거리죠. 이렇게 본다면 태양계의 크기는 인근별의 오르트 구름과도 겹쳐질 수도 있을 정도로 거대하다고 볼 수 있습니다.
-
-2.	태양
--	소개
- 태양은 우리 태양계의 중심에 있는 별입니다. 태양의 중력은 태양계를 지탱하며, 가장 큰 행성부터 가장 작은 파편 입자까지 모든 것을 궤도에 유지합니다. 태양과 지구의 연결과 상호작용은 계절, 해류, 날씨, 기후, 복사대, 그리고 오로라를 만들어냅니다. 태양은 태양계에 있는 모든 생명체에게 있어서 어머니와 같은 천체예요. 사실상 인간이 사용하는 모든 연료는 그 근원이 태양으로부터 받은 에너지이며 여덟 개의 행성은 물론 그 위성들과, 소행성 그리고 수많은 혜성 등 태양계의 전 가족이 태양에너지를 받아 제 모습을 유지하고 있는 것이죠. 태양의 무게는 지구 질량의 33만 배에 이르며 모든 행성들을 합쳐 놓은 질량의 750배 이상으로 태양계의 전체 질량의 99.85%를 차지합니다. 태양이 우리에게는 특별한 존재이지만, 태양은 태양계 내에서 스스로 빛을 내는 유일한 천체이지만 전 우주로 따지면 태양도 하나의 항성(별)에 불과하고, 우리 은하에는 우리 태양과 같은 별들이 수십억 개나 흩어져 있습니다.
-
--	태양의 구성과 규모
-태양은 태양계에서 가장 큰 천체입니다. 지름은 약 140만 킬로미터(865,000마일)입니다. 태양의 중력은 태양계를 하나로 묶어주어, 가장 큰 행성부터 가장 작은 파편까지 모든 것을 태양 주위를 공전합니다.
-우리 태양은 반지름이 약 70만 킬로미터(43만 5천 마일)인 중간 크기의 별입니다. 많은 별들이 훨씬 더 크지만, 태양은 우리 지구보다 훨씬 더 무겁습니다. 태양의 질량과 맞먹으려면 지구가 33만 개 이상이 필요하고, 태양의 부피를 채우려면 지구 130만 개가 필요하죠.
-태양은 지구에서 약 9,300만 마일(1억 5천만 킬로미터) 떨어져 있습니다. 가장 가까운 이웃 항성계는 알파 센타우리 삼중성계입니다. 적색 왜성 프록시마 센타우리는 4.24광년 떨어져 있고, 서로 공전하는 태양과 비슷한 두 별인 알파 센타우리 A와 B는 4.37광년 떨어져 있습니다. 1광년은 빛이 1년 동안 이동하는 거리로, 약 6조 마일(9.5조 킬로미터)에 해당합니다.
-태양의 표층은 표면과 대기로 구성돼 있는데 우리가 매일 볼 수 있는 태양의 표면이 '광구'이고 광구를 둘러싸고 있는 대기 중 하층대기가 '채층', 상층대기는 '코로나'입니다. 먼저, 광구를 살펴보면 쌀알을 뿌려 놓은 것과 비슷한 모습을 볼 수 있습니다. 이것은 쌀알무늬(쌀알조직)라 하며, 광구 밑의 대류지역에서 기체 거품이 상승하거나 하강하는 운동 때문에 나타납니다.
- 광구위의 채층은 온도가 광구보다 높아 약 1만도 정도 되는데 이곳에서는 뜨거운 가스가 태양 표면으로부터 약 1만 km이상의 높이까지 치솟는 홍염을 볼 수가 있습니다. 그리고 채층은 광구와 코로나 사이에 놓여 경계선 구실을 하기도 합니다.
- 채층 밖에 있는 코로나는 태양의 광구주위에 희박한 밀도의 이온화된 기체로 가장 높이, 넓게 퍼져 있는 상층 대기권입니다. 코로나의 형태와 크기는 일정하지 않지만 일반적으로 흑점과 관계가 깊죠. 흑점이 최소일 때 코로나의 크기는 작고 최대일 때는 크고 밝으며 매우 복잡한 구조를 갖는데, 태양의 채층과 코로나는 광구의 빛이 달에 의해 완전히 차단되는 개기일식 때에만 볼 수 있습니다. 태양의 가장자리로부터
-태양에서 가장 뜨거운 부분은 핵으로, 온도가 1,500만 °C(2,700만 °F)를 넘습니다. 우리가 태양 표면이라고 부르는 광구는 비교적 차가운 5,500 °C(10,000 °F)입니다. 태양의 가장 큰 미스터리 중 하나는 태양의 외기권인 코로나가 표면에서 멀어질수록 더 뜨거워진다는 것입니다. 코로나의 온도는 최대 200만 °C(350만 °F)에 달하는데, 이는 광구보다 훨씬 더 높습니다.
-
--	태양의 궤도와 자전
-태양도 지구와 같이 특정 궤도로 공전하고, 스스로 자전하고 있다는 사실을 알고 계셨나요? 태양은 우리 은하의 중심을 공전하며, 행성, 소행성, 혜성, 그리고 태양계의 다른 천체들을 끌어당깁니다. 우리 태양계는 평균 시속 450,000마일(시속 720,000킬로미터)의 속도로 움직이고 있습니다. 하지만 이 속도에서도 태양이 우리 은하를 한 바퀴 완전히 도는 데는 약 2억 3천만 년이 걸립니다.
-태양은 은하계를 공전하며 자전축을 중심으로 자전합니다. 자전축은 행성 궤도면에 대해 7.25도 기울어져 있어요. 태양은 고체가 아니기 때문에 각 부분이 서로 다른 속도로 자전합니다. 적도에서는 태양이 약 25일마다 한 바퀴 자전하지만, 극지방에서는 36일마다 한 바퀴 자전합니다.
-
-출처: 한국천문연구원 천문우주지식정보 (https://astro.kasi.re.kr), 2025년 4월 12일 기준
-출처: NASA 태양계 탐사(Solar System Exploration) (https://solarsystem.nasa.gov), 2025년 4월 12일 기준
-
+    <aside class = "aside" ><!--버튼-->
+        <button onclick="change_planet_selection(0)">0. 태양계</button>
+        <button onclick="change_planet_selection(1)">1. 태양</button>
+        <button onclick="change_planet_selection(2)">2. 수성</button>
+        <button onclick="change_planet_selection(3)">3. 금성</button>
+        <button onclick="change_planet_selection(4)">4. 지구</button>
+        <button onclick="change_planet_selection(5)">5. 화성</button>
+        <button onclick="change_planet_selection(6)">6. 목성</button>
+        <button onclick="change_planet_selection(7)">7. 토성</button>
+        <button onclick="change_planet_selection(8)">8. 천왕성</button>
+        <button onclick="change_planet_selection(9)">9. 혜왕성</button>
     </aside>
-    <footer class = "footer"><!--참고 사이트, 출처, 조원--></footer>
+    <footer class = "footer"><!--참고 사이트, 출처, 조원-->
+        <div id = "info" class= "font_nanum"> 제작자 :김민재(MinJae Kim), 문찬우(ChanWoo Moon), 임태민(TaeMin Lim)
+            <br>
+            경기대학교 AI컴퓨터공학부 컴퓨터공학전공
+        </div>
+    </footer>
 </body>
 </html>
