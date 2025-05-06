@@ -953,7 +953,7 @@
     
     
            
-            var planets_distance = [0.39, 0.72 , 1.0 , 1.52  , 5.20 , 12, 19.2 , 30.5];//태양으로 부터의 거리 AU
+            var planets_distance = [0.39, 0.72 , 1.0 , 1.52  , 5.0 , 15, 19.2 , 30.5];//태양으로 부터의 거리 AU
             var size = [0.4 , 0.9 , 1.0 , 0.5 , 11.2 , 9.4 , 4.0 , 3.9]; // 지구와의 크기 비 태양: 109
     
             var planets_rot = [0.01694 , 0.00411 , 1 , 0.975 , 2.4, 2.24 , 1.411 , 1.5]; // 행성자전 주기
@@ -972,7 +972,8 @@
             planet[5] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/graphic/planet_5.jpg");
             planet[6] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/graphic/planet_6.jpg");
             planet[7] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/graphic/planet_7.jpg");
-    
+            
+            var disk =  init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/graphic/disk.png");
            
             var solar_system_ratio = (planets_distance[7]*214);
         
@@ -994,6 +995,10 @@
                 planet[i].pos_v4f[2]  = y;
     
             }
+
+            disk.pos_v4f = planet[5].pos_v4f;
+            disk.scale_v4f =  [planet[5].scale_v4f[0]*2, 0.2 ,  planet[5].scale_v4f[2]*2];
+
             center_planet.pos_v4f = sun.pos_v4f;
             center_planet.scale_v4f = sun.scale_v4f;
             //0 all solar system 1 sun 2....
@@ -1039,8 +1044,8 @@
             gl.enable(gl.DEPTH_TEST);
     
              
-            var earth_rot = (PI/180 * 1) *  (1/60) * 6 * 365 * 0.3; 
-            var earth_orbit = (PI/180 * 1) *  (1/60) * 6 * 2;
+            var earth_rot = (PI/180 * 1) *  (1/30) * 365 * 0.1; 
+            var earth_orbit = (PI/180 * 1) *  (1/30) * 2;
     
             var theta =0;
             gl.clearColor(0,  0, 0 , 0);
@@ -1072,7 +1077,13 @@
     
                 
                 center_planet.rot_v4f[3] += (1/60 * 365) / 1000; 
-               
+                if( plnaet_seletion == 7)
+                {
+                    disk.scale_v4f = [center_planet.scale_v4f[0]*2 , 0.2 , center_planet.scale_v4f[2] * 2];
+                    disk.pos_v4f = center_planet.pos_v4f;
+                    disk.rot_v4f = center_planet.rot_v4f;
+                    draw_sphere(gl,disk);
+                }
                 draw_sphere(gl,center_planet);
                 
                 if(plnaet_seletion == 0)
@@ -1086,6 +1097,13 @@
                         planet[i].pos_v4f[0]  = x;
                         planet[i].pos_v4f[2]  = y;
                         draw_sphere(gl , planet[i]);
+                        if( i == 5)
+                        {
+                            disk.pos_v4f = planet[i].pos_v4f;
+                            disk.rot_v4f = planet[i].rot_v4f;
+                            disk.scale_v4f =  [planet[5].scale_v4f[0]*2, 0.2 ,  planet[5].scale_v4f[2]*2];
+                            draw_sphere(gl,disk);
+                        }
                     }
                 }
                
