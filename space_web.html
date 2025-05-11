@@ -147,181 +147,121 @@
         uniform mat4 u_proj_m4; 
         varying vec4 v_pos_v4;
         varying vec2 v_texcoord_v2;
+        varying vec4 v_norm_v4;
 
         void main()
         {
          
             vec4 pos= a_position_v4;
            
-            v_pos_v4 = pos;
-            
+
             pos.z = -pos.z;
+
+            v_norm_v4 = u_rotate_m4 *  pos;
+            v_pos_v4 =  u_translate_m4 *u_rotate_m4 * u_scale_m4 * pos;
+         
             v_texcoord_v2 = a_tex_coord_v2;
+           
             gl_Position =u_proj_m4* u_view_m4 * u_translate_m4 *u_rotate_m4*u_scale_m4 * pos;
            
+    
         
         }
     </script>
     <script id = "fragment-shader" type="x-shader/x-fragment">
         precision mediump float;
+
+        struct light_t{
+            vec4 pos_v4;
+            vec4 ambient_v4;
+            vec4 diffuse_v4;
+            vec4 specular_v4;
+            vec4 att_v4;
+        };
+
+        struct material_t
+        {
+            vec4 ambient_v4;
+            vec4 diffuse_v4;
+            vec4 specular_v4;
+            mediump float shineness_mf;
+            int luminary_1i;
+        };
+
+        varying vec4 v_norm_v4;
         varying vec4 v_pos_v4;
         varying vec2 v_texcoord_v2;
         uniform sampler2D u_texture_s2D;
+        uniform light_t u_light_20f;
+        uniform material_t u_material_13f;
+        uniform vec4 u_cam_pos_v4;
 
+        vec4 blinn_phong_model(vec4 norm_v4 ,vec4 vertex_pos_v4,vec4 cam_pos_v4,light_t light,material_t material)
+        {
+            vec3 sub_l_v = light.pos_v4.xyz  - vertex_pos_v4.xyz;
+            vec3 sub_cam_vert_pos = cam_pos_v4.xyz - vertex_pos_v4.xyz;
+            vec4 N = norm_v4;
+            vec4 L = vec4(normalize(sub_l_v), 1.0);
+            vec4 V = vec4(normalize(sub_cam_vert_pos), 1.0);
+            vec4 H = vec4(normalize(L.xyz + V.xyz), 1.0);
+
+            vec4 ambient = light.ambient_v4 * material.ambient_v4;
+
+            mediump float distance = length(sub_l_v); 
+            mediump float denom = light.att_v4.x + light.att_v4.y * distance + light.att_v4.z * distance * distance;
+            mediump float dot_L_N = dot(L.xyz,N.xyz);
+            mediump float dot_N_H = dot(N.xyz,H.xyz);
+            mediump float max_dot_N_H = max(dot_N_H, 0.0);
+            mediump float max_dot_L_N = max(dot_L_N , 0.0);
+
+            vec4 diffuse = ( max_dot_L_N* light.diffuse_v4 * material.diffuse_v4 )/ denom; 
+            
+            mediump float exp = material.shineness_mf;
+          
+            mediump float pow_dot_N_H_exp = pow( max_dot_N_H, exp);
+            vec4 specular = (pow_dot_N_H_exp * light.specular_v4 * material.specular_v4) / denom;
+
+            return  specular +  diffuse + ambient;
+
+
+        }
+
+        vec4 rim(vec4 norm_v4 ,vec4 vertex_pos_v4 , vec4 cam_pos_v4)
+        {   
+        
+            vec3 sub_cam_vert_pos = vertex_pos_v4.xyz - cam_pos_v4.xyz;
+            vec4 V = vec4(normalize(sub_cam_vert_pos), 1.0);
+            vec4 N = norm_v4;
+            float dot_N_V = dot( V , N);
+            float f = 1.0 - dot_N_V;
+            f = smoothstep(0.0 , 0.7 , f);
+            f = pow(f , 0.1);
+            return vec4(1.0-f , 1.0-f , 1.0-f, 1.0) * vec4(0.5 , 0.5 , 0.5 , 1.0);
+
+        }
       
         void main()
         {   
-            vec4 tex_color = texture2D(u_texture_s2D ,  v_texcoord_v2);
+        
+            vec4 tex_color = texture2D(u_texture_s2D ,  v_texcoord_v2); 
             vec4 color = vec4( (v_pos_v4.y + 1.0)/2.0 , (v_pos_v4.y + 1.0)/2.0 , (v_pos_v4.y + 1.0)/2.0 , 1.0  );
-            gl_FragColor = tex_color;
+
+            mediump float luminary = 1.0 - 2.0 * float(u_material_13f.luminary_1i);         
+            vec4 norm = vec4(v_norm_v4.x* luminary , v_norm_v4.y* luminary, v_norm_v4.z* luminary , 1.0);
+            vec4 light_color = blinn_phong_model(norm,v_pos_v4,u_cam_pos_v4,u_light_20f,u_material_13f);
+            vec4 rim_color = rim(v_norm_v4 , v_pos_v4, u_cam_pos_v4);
+            gl_FragColor = tex_color * light_color;
         }
 
     </script>
     <script src="render.js"></script>
     <script src="math_affine.js"></script>
+    <script src="object.js"></script>
+    <script src="light.js"></script>
     <script>
 
     
-    class sphere
-    {
-        pos_v4f;
-        rot_v4f;
-        scale_v4f;
-
-        sphere_vbo;
-        sphere_color_buffer;
-        sphere_vbo_len;
-
-        sphere_vbo_id;
-        sphere_tbo_id;
-
-        sphere_texture_info;
-
-        constructor()
-        {
-            this.pos_v4f = [0 , 0 , 0 , 0];
-            this.rot_v4f = [0 , 0 , 0 , 0];
-            this.scale_v4f = [0 ,0 ,0 ,0];
-            this.sphere_vbo = [];
-            this.sphere_color_buffer = [];
-            this.sphere_texture_coord_buffer = [];
-            this.sphere_vbo_len = 0;
-            this.sphere_texture_coord_buffer_len = 0;
-        }
-
-        sub_division_tri(level_1i,start_idx ,p1_v4f ,p2_v4f ,p3_v4f)
-        {
-          
-        if(level_1i == 0)
-        {
-            this.sphere_vbo[start_idx] = p1_v4f[0];     //X
-            this.sphere_vbo[start_idx+1] = p1_v4f[1];   //Y
-            this.sphere_vbo[start_idx+2] = p1_v4f[2];   //Z
-            this.sphere_vbo[start_idx+3] = 1.0; //W
-
-            this.sphere_vbo[start_idx+6] = p2_v4f[0];
-            this.sphere_vbo[start_idx+7] = p2_v4f[1];
-            this.sphere_vbo[start_idx+8] = p2_v4f[2];
-            this.sphere_vbo[start_idx+9] = 1.0;
-
-        
-
-            this.sphere_vbo[start_idx+12] = p3_v4f[0];
-            this.sphere_vbo[start_idx+13] = p3_v4f[1];
-            this.sphere_vbo[start_idx+14] = p3_v4f[2];
-            this.sphere_vbo[start_idx+15] = 1.0;
-            
-
-
-            if(p1_v4f[2] < 0 && p2_v4f[2] && p3_v4f[2])
-            {
-                this.sphere_vbo[start_idx+4]  =   (Math.atan2(-p1_v4f[0] , -p1_v4f[2]) + PI)/PI/2.0 ;
-                this.sphere_vbo[start_idx+5]  =   0.5 - Math.asin(p1_v4f[1] )/(PI) ;
-                this.sphere_vbo[start_idx+10]  =   (Math.atan2(-p2_v4f[0] , -p2_v4f[2]) + PI)/PI/2.0  ;
-                this.sphere_vbo[start_idx+11]  =   0.5 - Math.asin(p2_v4f[1] )/(PI) ;
-                this.sphere_vbo[start_idx+16]  = (Math.atan2(-p3_v4f[0] , -p3_v4f[2]) + PI)/PI/2.0 ;
-                this.sphere_vbo[start_idx+17]  =   0.5 - Math.asin(p3_v4f[1] )/(PI) ;
-
-            }
-            else
-            {
-                this.sphere_vbo[start_idx+4]  =   Math.atan2(p1_v4f[0],p1_v4f[2])/PI/2.0 ;
-                this.sphere_vbo[start_idx+5]  =   0.5 - Math.asin(p1_v4f[1] )/(PI) ;
-                this.sphere_vbo[start_idx+10]  =  Math.atan2(p2_v4f[0], p2_v4f[2])/PI/2.0;
-                this.sphere_vbo[start_idx+11]  =   0.5 - Math.asin(p2_v4f[1] )/(PI) ;
-                this.sphere_vbo[start_idx+16]  =  Math.atan2(p3_v4f[0], p3_v4f[2])/PI/2.0;
-                this.sphere_vbo[start_idx+17]  =   0.5 - Math.asin(p3_v4f[1] )/(PI) ;
-               
-            }
-
-          
-
-    
-              
-               
-                
-               
-    
-                
-
-
-            console.log("---");
-            console.log(this.sphere_vbo[start_idx+4]);
-                
-            console.log(this.sphere_vbo[start_idx+10]);
-                
-            console.log(this.sphere_vbo[start_idx+16]);
-               
-            
-            
-           
-            this.sphere_vbo_len = this.sphere_vbo_len + 18;
-        }
-        else
-        {
-            var p1_p2_v4f = add_v4v4_xyz(p1_v4f , p2_v4f);
-            p1_p2_v4f = normalize_v4_xyz(p1_p2_v4f);
-
-            var p2_p3_v4f = add_v4v4_xyz(p2_v4f , p3_v4f);
-            p2_p3_v4f = normalize_v4_xyz(p2_p3_v4f);
-
-            var p3_p1_v4f = add_v4v4_xyz(p3_v4f ,p1_v4f);
-            p3_p1_v4f = normalize_v4_xyz(p3_p1_v4f);
-            
-            
-            this.sub_division_tri(level_1i - 1 , this.sphere_vbo_len , p1_v4f , p1_p2_v4f , p3_p1_v4f);
-            this.sub_division_tri(level_1i - 1 , this.sphere_vbo_len , p2_v4f , p2_p3_v4f , p1_p2_v4f);
-            this.sub_division_tri(level_1i - 1 , this.sphere_vbo_len , p3_v4f , p3_p1_v4f , p2_p3_v4f);
-            this.sub_division_tri(level_1i - 1 , this.sphere_vbo_len , p1_p2_v4f , p2_p3_v4f , p3_p1_v4f);
    
-        }
-
-        }
-
-        gen_sphere(level_1i, src_cube_object , src_cube_object_len)
-        {
-            for(var i = 0; i < src_cube_object_len; i += 12)
-            {
-                var p1_v4f = [ src_cube_object[i] , src_cube_object[i+1] , src_cube_object[i+2] , src_cube_object[i+3]  ];
-                p1_v4f = normalize_v4_xyz(p1_v4f);
-
-                var p2_v4f = [ src_cube_object[i+4] , src_cube_object[i+5] , src_cube_object[i+6] , src_cube_object[i+7]  ];
-                p2_v4f = normalize_v4_xyz(p2_v4f);
-
-                var p3_v4f = [ src_cube_object[i+8] , src_cube_object[i+9] , src_cube_object[i+10] , src_cube_object[i+11]  ];
-                p3_v4f = normalize_v4_xyz(p3_v4f);
-             
-                this.sub_division_tri(level_1i , this.sphere_vbo_len , p1_v4f,p2_v4f,p3_v4f);
-       
-            }
-
-        }
-
-
-      
-
-
-    }
       // nav 요소 관련 코드(by 태민)
     function toggleItem(event, element) {
         event.stopPropagation();
@@ -856,17 +796,16 @@
             function loadImageAndCreateTextureInfo(gl,url) {
                 var tex = gl.createTexture();
                 gl.bindTexture(gl.TEXTURE_2D, tex);
-                //Fill the texture with a 1x1 blue pixel.
+               
                 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
                           new Uint8Array([0, 0, 255, 255]));
                 
-                // let's assume all images are not a power of 2
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
                 
                 var textureInfo = {
-                    width: 1,   // we don't know the size until it loads
+                    width: 1,  
                     height: 1,
                     texture: tex,
                 };
@@ -931,6 +870,8 @@
     
             var u_view_loc_m4f = gl.getUniformLocation(program , "u_view_m4");
             var u_proj_loc_m4f = gl.getUniformLocation(program , "u_proj_m4");
+
+            var u_cam_pos_loc_v4f = gl.getUniformLocation(program , "u_cam_pos_v4");
             gl.enableVertexAttribArray(aPos_loc_v4f);
             gl.enableVertexAttribArray(aTex_loc_v2f);
     
@@ -944,11 +885,7 @@
             }
             var sphere_object = new sphere();  // origin_sphere
             sphere_object.gen_sphere(4 ,cube , 144);
-            console.log(sphere_object.sphere_vbo.length);
-            console.log(sphere_object.sphere_vbo_len);
-    
-
-    
+          
     
     
     
@@ -962,7 +899,14 @@
     
             var planet = [];
             var center_planet = init_sphere(gl ,sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/sun.jpg");
-          
+             
+             
+            center_planet.material.ambient_v4f = [1.0 , 1.0 , 1.0 , 1.0];
+            center_planet.material.diffuse_v4f = [1.0 , 1.0 , 1.0 , 1.0];
+            center_planet.material.luminary_1i = 1;
+
+
+
             var sun =   init_sphere(gl ,sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/sun.jpg");
             planet[0] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/graphic/planet_0.jpg");
             planet[1] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/graphic/planet_1.jpg");
@@ -981,9 +925,13 @@
             var solar_system_size_scale = 0.0
     
             sun.scale_v4f = [ 109/4, 109/4, 109/4, 1];
-            console.log( sun.scale_v4f);
+            
+            sun.material.glUniformMaterialLocation(gl,program,"u_material_13f");
+            center_planet.material.glUniformMaterialLocation(gl,program,"u_material_13f");
+           
             for(var i = 0; i < 8; i++)
             {
+                planet[i].material.glUniformMaterialLocation(gl,program,"u_material_13f");
                 planet[i].pos_v4f = [109/3 + i*10 + planets_distance[i]*2.5 , 0 , 0 , 1];
                 
                 planet[i].scale_v4f = [0.9 +  size[i]*0.9 ,0.9 + size[i]*0.9  , 0.9 + size[i]*0.9 , 1];
@@ -996,6 +944,7 @@
     
             }
 
+            disk.material.glUniformMaterialLocation(gl,program,"u_material_13f");
             disk.pos_v4f = planet[5].pos_v4f;
             disk.scale_v4f =  [planet[5].scale_v4f[0]*2, 10 ,  planet[5].scale_v4f[2]*2];
 
@@ -1049,7 +998,15 @@
     
             var theta =0;
             gl.clearColor(0,  0, 0 , 0);
+
+
+            light_0 = new light();
+            light_0.glUniformLightLocation(gl ,program ,"u_light_20f");
+            light_0.pos_v4f = center_planet.pos_v4f;
+            light_0.glUniformLight(gl);
+            
             draw();
+            
             function draw()
             {     
     
@@ -1057,8 +1014,8 @@
                 const screen_object = new proj_screen();
                 
                 select_planet(plnaet_seletion);
-                var view_cam_pos_v4f = [0 ,  Math.sin(PI / 180 * 30) * view_cam_radius,  Math.cos(PI / 180 * 30) * view_cam_radius , 1];
-               
+                var view_cam_pos_v4f =[0 ,  Math.sin(PI / 180 * 30) * view_cam_radius ,  Math.cos(PI / 180 * 30) * view_cam_radius , 1];
+                gl.uniform4fv(u_cam_pos_loc_v4f , view_cam_pos_v4f);
                 var view_cam_up_v4f = [0 , 1 , 0, 1];
                 var view_cam_at_v4f = [0 , 0 , 0 , 1]
                 var angle = 0;
@@ -1074,8 +1031,8 @@
                 screen_object.perspective_fov_LH(PI/180 * 60 , window.innerWidth/window.innerHeight - 0.07 , 1 , 500.0 );
                 gl.uniformMatrix4fv(u_view_loc_m4f, 0,  cam_object.view_mat4);
                 gl.uniformMatrix4fv(u_proj_loc_m4f, 0, screen_object.proj_mat4);
-    
-                
+              
+ 
                 center_planet.rot_v4f[3] += (1/60 * 365) / 1000; 
                 draw_sphere(gl,center_planet);
                 
@@ -1083,6 +1040,7 @@
                 {
                     gl.enable(gl.BLEND);
                     gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+                    disk.material.luminary_1i = 1;
                     disk.scale_v4f = [center_planet.scale_v4f[0]*2 , 0.1 , center_planet.scale_v4f[2] * 2];
                     disk.pos_v4f = center_planet.pos_v4f;
                     disk.rot_v4f = center_planet.rot_v4f;
@@ -1094,6 +1052,8 @@
                 {
                     for(var i = 0; i < 8; i++)
                     {
+
+                       
                         planet[i].rot_v4f[3] +=planets_rot[i] * earth_rot;
                       
                         x =  planet[i].pos_v4f[0] * Math.cos(planet_orbit[i]* earth_orbit) -   planet[i].pos_v4f[2] * Math.sin(planet_orbit[i]* earth_orbit); 
@@ -1103,8 +1063,10 @@
                         draw_sphere(gl , planet[i]);
                         if( i == 5)
                         {
+                           
                             gl.enable(gl.BLEND);
                             gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+                            disk.material.luminary_1i = 0;
                             disk.pos_v4f = planet[i].pos_v4f;
                             disk.rot_v4f = planet[i].rot_v4f;
                             disk.scale_v4f =  [planet[5].scale_v4f[0]*2, 0.1 ,  planet[5].scale_v4f[2]*2];
@@ -1146,8 +1108,10 @@
                 return new_sphere
     
             }
+
+
+         
            
-    
             function draw_sphere(gl ,draw_sphere)
             {
                 const trans_object = new model_object();
@@ -1157,7 +1121,9 @@
                 gl.uniformMatrix4fv(u_trans_loc_m4f, 0, trans_object.trans_mat4);
                 gl.uniformMatrix4fv(u_rotate_loc_m4f, 0, trans_object.rotate_mat4);
                 gl.uniformMatrix4fv(u_scale_loc_m4f, 0, trans_object.scale_mat4);
-    
+
+                
+                draw_sphere.material.glUniformMaterial(gl);
                 gl.bindTexture(gl.TEXTURE_2D , draw_sphere.sphere_texture_info.texture );
                
                 gl.bindBuffer(gl.ARRAY_BUFFER , draw_sphere.sphere_vbo_id);
