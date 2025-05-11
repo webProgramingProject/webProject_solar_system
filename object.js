@@ -6,12 +6,14 @@ class material
     specular_v4f;
     shineness_1f;
     luminary_1i;
+    rim_color_v4f;
 
     ambient_loc;
     diffuse_loc;
     specular_loc;
     shineness_loc;
     luminary_loc;
+    rim_color_loc;
 
     constructor()
     {
@@ -20,12 +22,14 @@ class material
         this.specular_v4f = [0.5, 0.5, 0.5, 1.0];
         this.shineness_1f = 64.0;
         this.luminary_1i = 0;
+        this.rim_color_v4f = [0.5 , 0.5 , 0.5 , 1.0];
         
         this.ambient_loc = 0;
         this.diffuse_loc = 0;
         this.specular_loc = 0;
         this.shineness_loc = 0;
         this.luminary_loc = 0;
+        this.rim_color_loc = 0;
     }
 
     glUniformMaterialLocation(gl ,program ,name)
@@ -36,6 +40,7 @@ class material
         this.specular_loc = gl.getUniformLocation(program , name + ".specular_v4");
         this.shineness_loc = gl.getUniformLocation(program , name + ".shineness_mf");
         this.luminary_loc = gl.getUniformLocation(program , name + ".luminary_1i");
+        this.rim_color_loc = gl.getUniformLocation(program , name + ".rim_color_v4");
         
 
     }
@@ -47,6 +52,7 @@ class material
         gl.uniform4fv(this.specular_loc , this.specular_v4f);
         gl.uniform1f(this.shineness_loc , this.shineness_1f);
         gl.uniform1i(this.luminary_loc , this.luminary_1i);
+        gl.uniform4fv(this.rim_color_loc , this.rim_color_v4f);
 
     }
 }

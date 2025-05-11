@@ -186,6 +186,7 @@
             vec4 specular_v4;
             mediump float shineness_mf;
             int luminary_1i;
+            vec4 rim_color_v4;
         };
 
         varying vec4 v_norm_v4;
@@ -195,6 +196,7 @@
         uniform light_t u_light_20f;
         uniform material_t u_material_13f;
         uniform vec4 u_cam_pos_v4;
+        
 
         vec4 blinn_phong_model(vec4 norm_v4 ,vec4 vertex_pos_v4,vec4 cam_pos_v4,light_t light,material_t material)
         {
@@ -226,7 +228,7 @@
 
         }
 
-        vec4 rim(vec4 norm_v4 ,vec4 vertex_pos_v4 , vec4 cam_pos_v4)
+        vec4 rim(vec4 norm_v4 ,vec4 vertex_pos_v4 , vec4 cam_pos_v4 ,vec4 rim_color_v4)
         {   
         
             vec3 sub_cam_vert_pos = vertex_pos_v4.xyz - cam_pos_v4.xyz;
@@ -234,9 +236,9 @@
             vec4 N = norm_v4;
             float dot_N_V = dot( V , N);
             float f = 1.0 - dot_N_V;
-            f = smoothstep(0.0 , 0.7 , f);
-            f = pow(f , 0.1);
-            return vec4(1.0-f , 1.0-f , 1.0-f, 1.0) * vec4(0.5 , 0.5 , 0.5 , 1.0);
+            f = smoothstep(0.0 , 0.5 , f);
+            f = pow(f , 0.2);
+            return rim_color_v4 * vec4(1.0-f , 1.0-f , 1.0-f, 1.0) ;
 
         }
       
@@ -248,9 +250,9 @@
 
             mediump float luminary = 1.0 - 2.0 * float(u_material_13f.luminary_1i);         
             vec4 norm = vec4(v_norm_v4.x* luminary , v_norm_v4.y* luminary, v_norm_v4.z* luminary , 1.0);
-            vec4 light_color = blinn_phong_model(norm,v_pos_v4,u_cam_pos_v4,u_light_20f,u_material_13f);
-            vec4 rim_color = rim(v_norm_v4 , v_pos_v4, u_cam_pos_v4);
-            gl_FragColor = tex_color * light_color;
+            vec4 light = blinn_phong_model(norm,v_pos_v4,u_cam_pos_v4,u_light_20f,u_material_13f);
+            vec4 rim_light = rim(v_norm_v4 , v_pos_v4, u_cam_pos_v4, u_material_13f.rim_color_v4);
+            gl_FragColor = tex_color * light + rim_light;
         }
 
     </script>
@@ -918,7 +920,7 @@
             planet[7] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/graphic/planet_7.jpg");
             
             var disk =  init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/graphic/fake_disk.png");
-           
+            
             var solar_system_ratio = (planets_distance[7]*214);
         
             var solar_system_distance_scale = 0.0;
@@ -943,11 +945,13 @@
                 planet[i].pos_v4f[2]  = y;
     
             }
+           
 
             disk.material.glUniformMaterialLocation(gl,program,"u_material_13f");
+            disk.material.rim_color_v4f = [0.0 , 0.0 , 0.0 ,0.0];
             disk.pos_v4f = planet[5].pos_v4f;
             disk.scale_v4f =  [planet[5].scale_v4f[0]*2, 10 ,  planet[5].scale_v4f[2]*2];
-
+           
             center_planet.pos_v4f = sun.pos_v4f;
             center_planet.scale_v4f = sun.scale_v4f;
             //0 all solar system 1 sun 2....
@@ -1044,6 +1048,7 @@
                     disk.scale_v4f = [center_planet.scale_v4f[0]*2 , 0.1 , center_planet.scale_v4f[2] * 2];
                     disk.pos_v4f = center_planet.pos_v4f;
                     disk.rot_v4f = center_planet.rot_v4f;
+                    
                     draw_sphere(gl,disk);
                     gl.disable(gl.BLEND);
                 }
@@ -1070,6 +1075,7 @@
                             disk.pos_v4f = planet[i].pos_v4f;
                             disk.rot_v4f = planet[i].rot_v4f;
                             disk.scale_v4f =  [planet[5].scale_v4f[0]*2, 0.1 ,  planet[5].scale_v4f[2]*2];
+                            
                             draw_sphere(gl,disk);
                             gl.disable(gl.BLEND);
                         }
