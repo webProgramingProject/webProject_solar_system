@@ -7,22 +7,25 @@ class material
     shineness_1f;
     luminary_1i;
     rim_color_v4f;
-
+    n_mode_1i;
+    
     ambient_loc;
     diffuse_loc;
     specular_loc;
     shineness_loc;
     luminary_loc;
     rim_color_loc;
+    n_mode_loc;
 
     constructor()
     {
-        this.ambient_v4f = [0.5, 0.5, 0.5, 1.0];
+        this.ambient_v4f = [0.3, 0.3, 0.3, 1.0];
         this.diffuse_v4f = [0.8, 0.8, 0.8, 1.0];
         this.specular_v4f = [0.5, 0.5, 0.5, 1.0];
-        this.shineness_1f = 64.0;
+        this.shineness_1f = 6.0;
         this.luminary_1i = 0;
         this.rim_color_v4f = [0.5 , 0.5 , 0.5 , 1.0];
+        this.n_mode_1i = 0;
         
         this.ambient_loc = 0;
         this.diffuse_loc = 0;
@@ -30,6 +33,7 @@ class material
         this.shineness_loc = 0;
         this.luminary_loc = 0;
         this.rim_color_loc = 0;
+        this.n_mode_loc = 0;
     }
 
     glUniformMaterialLocation(gl ,program ,name)
@@ -41,8 +45,9 @@ class material
         this.shineness_loc = gl.getUniformLocation(program , name + ".shineness_mf");
         this.luminary_loc = gl.getUniformLocation(program , name + ".luminary_1i");
         this.rim_color_loc = gl.getUniformLocation(program , name + ".rim_color_v4");
-        
 
+        this.n_mode_loc = gl.getUniformLocation(program , "u_n_mode_1i");
+       
     }
     glUniformMaterial(gl)
     {
@@ -52,8 +57,9 @@ class material
         gl.uniform4fv(this.specular_loc , this.specular_v4f);
         gl.uniform1f(this.shineness_loc , this.shineness_1f);
         gl.uniform1i(this.luminary_loc , this.luminary_1i);
+        gl.uniform1i(this.n_mode_loc , this.n_mode_1i);
         gl.uniform4fv(this.rim_color_loc , this.rim_color_v4f);
-
+  
     }
 }
 
@@ -110,7 +116,7 @@ class sphere
         
 
 
-        if(p1_v4f[2] < 0 && p2_v4f[2] && p3_v4f[2])
+        if(p1_v4f[2] < 0 && p2_v4f[2] < 0 && p3_v4f[2] < 0)
         {
             this.sphere_vbo[start_idx+4]  =   (Math.atan2(-p1_v4f[0] , -p1_v4f[2]) + PI)/PI/2.0 ;
             this.sphere_vbo[start_idx+5]  =   0.5 - Math.asin(p1_v4f[1] )/(PI) ;
