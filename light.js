@@ -1,3 +1,5 @@
+
+
 class light
 {
     pos_v4f;
@@ -15,10 +17,10 @@ class light
     constructor()
     {
         this.pos_v4f = [0, 0, 0, 1.0];
-        this.ambient_v4f = [0.1, 0.1, 0.1, 1.0];
+        this.ambient_v4f = [0.2, 0.2, 0.2, 1.0];
         this.diffuse_v4f = [0.8, 0.8, 0.8, 1.0];
         this.specular_v4f = [0.5, 0.5, 0.5, 1.0];
-        this.att_v4f = [1.0, 0, 0, 1.0];
+        this.att_v4f = [1.0, 0.0, 0.0, 1.0];
 
         this.pos_loc = 0;
         this.ambient_loc = 0;

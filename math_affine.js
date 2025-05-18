@@ -1,3 +1,5 @@
+
+
 const PI =3.1415929204;
 const identity_mat4 = [
     1 , 0 , 0 , 0,
@@ -46,7 +48,7 @@ function normalize_v4_xyz(v_v4f)
 }
 
 
-//3차원 좌표계의 외적 내적임 외적의 반환값 w 에는 벡터임을 나타기위해 1로 표기한것것
+//3李⑥ 醫怨 몄 댁 몄 諛媛 w  踰≫곗 湲곗1濡 湲고寃寃
 function dot_product_1f_xyz(v1_v4f ,v2_v4f)
 {
     var re_1f = v1_v4f[0]*v2_v4f[0] +
@@ -148,10 +150,14 @@ class model_object
 
 }
 
-// left handle system // 레스터 과정에서 webgl은 rh이지만 vert shader에서 z값 * -1
+// left handle system // ㅽ怨쇱 webgl rh댁留 vert shader z媛 * -1
 class view_cam
 {
 
+    pos_v4f;
+    at_v4f;
+    up_v4f;
+    
     view_mat4 = identity_mat4;
     constructor()
     {
@@ -160,6 +166,9 @@ class view_cam
     
     look_at_LH(cam_pos_v4f ,cam_at_v4f ,cam_up_v4f)
     {
+        this.pos_v4f = cam_pos_v4f;
+        this.at_v4 = cam_at_v4f;
+        this.up_v4f = cam_up_v4f;
         //z_axis , x_axis , y_axis is unit vector of view coord system
         var z_axis_v4f = sub_v4v4_xyz(cam_at_v4f, cam_pos_v4f );
         z_axis_v4f = normalize_v4_xyz(z_axis_v4f);
