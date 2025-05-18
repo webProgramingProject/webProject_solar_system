@@ -7,135 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>우주의 창, 태양계 이야기</title>
     <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-barun-pen.css" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            background: url('https://cdn.pixabay.com/photo/2023/01/24/23/20/universe-7742159_1280.jpg') no-repeat center center/cover;
-            background-color: #000;
-            overflow: hidden;
-            min-height: 100vh;
-            position: relative;
-        }
-        #shooting-star-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1; /* 3D 태양계 캔버스보다 아래쪽 */
-            pointer-events: none;
-        }
-        canvas#c {
-            position: relative;
-            z-index: 2; /* 별똥별 위에 표시 */
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-        aside button {
-            font-family: NanumBarunPen;
-            margin: 0 auto;
-            margin-bottom : 10px;
-            padding: 10% 2%;
-            width:80%;
-            font-size: 10px;
-            background: rgba(255,255,255,0.8);
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            text-align: center;
-        }
-    </style>
-    
-    <script>
-    window.addEventListener('load', () => {
-        // 별똥별용 캔버스 추가
-        const canvas = document.createElement('canvas');
-        canvas.id = 'shooting-star-canvas';
-        document.body.appendChild(canvas);
-        const ctx = canvas.getContext('2d');
-    
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resize();
-        window.addEventListener('resize', resize);
-    
-        class ShootingStar {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * canvas.width * 0.8;
-                this.y = Math.random() * canvas.height * 0.3;
-                this.speed = 6 + Math.random() * 4;
-                this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.05;
-                this.opacity = 1;
-                this.trail = [];
-                this.maxTrail = 30;
-                this.delayTrail = 5;
-                this.frames = 0;
-            }
-            update() {
-                this.x += Math.cos(this.angle) * this.speed;
-                this.y += Math.sin(this.angle) * this.speed;
-                this.frames++;
-                if (this.frames > this.delayTrail) {
-                    this.trail.push({ x: this.x, y: this.y, opacity: this.opacity });
-                    if (this.trail.length > this.maxTrail) this.trail.shift();
-                }
-                this.opacity -= 0.004;
-                if (this.opacity <= 0) this.dead = true;
-            }
-            draw(ctx) {
-                for (let i = 0; i < this.trail.length; i++) {
-                    const t = this.trail[i];
-                    const grad = ctx.createLinearGradient(t.x, t.y, t.x - 50, t.y - 50);
-                    grad.addColorStop(0, `rgba(255,255,255,${t.opacity * 0.3})`);
-                    grad.addColorStop(1, `rgba(255,255,255,0)`);
-                    ctx.strokeStyle = grad;
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(t.x, t.y);
-                    ctx.lineTo(t.x - 50, t.y - 50);
-                    ctx.stroke();
-                }
-            }
-        }
-    
-        let stars = [];
-    
-        function createShootingStars() {
-            for (let i = 0; i < 4; i++) {
-                stars.push(new ShootingStar());
-            }
-        }
-    
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            stars.forEach(star => {
-                star.update();
-                star.draw(ctx);
-            });
-            stars = stars.filter(star => !star.dead);
-            requestAnimationFrame(animate);
-        }
-        animate();
-    
-        // ⭐️ aside 안의 버튼들 클릭할 때 별똥별 + 소리
-        const shootingSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_e8b5d15ce7.mp3?filename=shooting-star-104854.mp3');
-    
-        document.querySelectorAll('aside button').forEach(button => {
-            button.addEventListener('click', () => {
-                createShootingStars();
-                shootingSound.currentTime = 0;
-                shootingSound.play().catch(e => console.log('Audio play error:', e));
-            });
-        });
-    });
-    </script>
+    <link rel = "stylesheet" href = "Menu_bar.css">
+    <script src = "shooting_star.js"></script>
+    <script src = "Menu_bar.js"></script>
 
     <script id = "vertex-shader" type="x-shader/x-vertex">
         precision highp float;
@@ -380,33 +254,43 @@
             background-size: cover;
             padding-top : calc (300 / 1000 * 100%);
             margin:0;
+            position: relative;
         }
-        .header {
+        #banner {
             width: 100%; height: 10%;
-            position:relative;
+            top: 0%;
+            position:absolute;
+            z-index: 10;
         }
-        .nav {
-            width: 22%; height: 80%; float: left;
+        #left {
+            width: 22%; height: 80%;
             overflow:scroll;
             color: white;
             background: rgba(0, 0, 0, 0.5);
             counter-reset: nav-counter;
+            position: absolute;
+            top: 10%;
+            left: 0%;
+            z-index: 10;
         }
-        .section {
-            width: 70%; height: 80%; float: left;
-         
-        }
-        .aside {
-            width: 8%; height: 80%; float: left;
+        #right {
+            width: 8%; height: 80%; 
             overflow-x:hidden;
             overflow-y:scroll;
             color: white;
+            position: absolute;
+            top: 10%;
+            right: 0%;
+            z-index: 10;
           
         }
-        .footer {
-            width: 100%; height: 10%; clear: both;
+        #bottom {
+            width: 100%; height: 10%; 
+            z-index: 10;
+            bottom: 0%;
+            position: absolute;
         }
-        .nav, .aside {
+        #left, #right {
             overflow: auto;
             scrollbar-width: thin; /* Firefox */
             scrollbar-color: rgba(255,255,255,0.2) rgba(255,255,255,0.1); /* Firefox */
@@ -418,26 +302,26 @@
         }
 
         /* WebKit (Chrome, Safari 등등) */
-        .nav::-webkit-scrollbar,
-        .aside::-webkit-scrollbar {
+        #left::-webkit-scrollbar,
+        #right::-webkit-scrollbar {
            width: 8px;
         }
-        .nav::-webkit-scrollbar-track,
-        .aside::-webkit-scrollbar-track {
+        #left::-webkit-scrollbar-track,
+        #right::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 4px;
         }
-        .nav::-webkit-scrollbar-thumb,
-        .aside::-webkit-scrollbar-thumb {
+        #left::-webkit-scrollbar-thumb,
+        #right::-webkit-scrollbar-thumb {
             background-color: rgba(255, 255, 255, 0.2);
             border-radius: 4px;
         }
-        .nav::-webkit-scrollbar-thumb:hover,
-        .aside::-webkit-scrollbar-thumb:hover {
+        #left::-webkit-scrollbar-thumb:hover,
+        #right::-webkit-scrollbar-thumb:hover {
             background-color: rgba(255, 255, 255, 0.3);
         }
-        .nav::-webkit-scrollbar-button, 
-        .aside::-webkit-scrollbar-button {
+        #left::-webkit-scrollbar-button, 
+        #right::-webkit-scrollbar-button {
             display: none;
             height: 0;
             width: 0;
@@ -512,10 +396,14 @@
     </style>
 </head>
 <body>
-    <header class = "header">
+    <canvas id = "c"  ></canvas>
+    <script src = "renderMain.js"></script>      
+    <div id = "banner">
         <h1 id = "site_title" class = "font_nanum" >우주의 창, 태양계 이야기</h1>
-    </header>
-        <nav class="nav font_nanum">
+    </div>
+<div id = "contents">
+    <div id = "left">
+        <div class="nav font_nanum">
             <div class="nav-item" onclick="toggleItem(event, this)">0. 태양계<span class="toggle-button">∨</span>
                 <div class="sub-items">
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
@@ -764,12 +652,9 @@
                     </div>
                 </div>
             </div>
-    </nav>
-    <section class = "section">
-        <canvas id = "c"  ></canvas>
-        <script src = "renderMain.js"></script>        
-    </section>
-    <aside class = "aside" ><!--버튼-->
+        </div>
+    </div>
+    <div id = "right">  
         <button onclick="open_nav_item(0); change_planet_selection(0)">0. 태양계</button>
         <button onclick="open_nav_item(1); change_planet_selection(1)">1. 태양</button>
         <button onclick="open_nav_item(2); change_planet_selection(2)">2. 수성</button>
@@ -780,12 +665,13 @@
         <button onclick="open_nav_item(7); change_planet_selection(7)">7. 토성</button>
         <button onclick="open_nav_item(8); change_planet_selection(8)">8. 천왕성</button>
         <button onclick="open_nav_item(9); change_planet_selection(9)">9. 해왕성</button>
-    </aside>
-    <footer class = "footer"><!--참고 사이트, 출처, 조원-->
+    </div>
+</div>
+    <div id = "bottom"><!--참고 사이트, 출처, 조원-->
         <div id = "info" class= "font_nanum"> 제작자 :김민재(MinJae Kim), 문찬우(ChanWoo Moon), 임태민(TaeMin Lim)
             <br>
             경기대학교 AI컴퓨터공학부 컴퓨터공학전공
         </div>
-    </footer>
-</body>
-</htm
+    </div>
+    </body>
+</html>
