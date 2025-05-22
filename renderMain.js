@@ -129,16 +129,17 @@
                     canvas_cur_point_v2f[0] = p.offsetX;
                     canvas_cur_point_v2f[1] = p.offsetY;
                     mouse_cam_trackball(cam_object , canvas , canvas_start_point_v2f ,canvas_cur_point_v2f );
-                    
+                    canvas_start_point_v2f[0] = p.offsetX;
+                    canvas_start_point_v2f[1] = p.offsetY;
                    
                 }
                 
             });
             canvas.addEventListener("mouseup", function(p){
+                mouse_down = 0;
                 canvas_cur_point_v2f[0] = p.offsetX;
                 canvas_cur_point_v2f[1] = p.offsetY;
-                mouse_cam_trackball(cam_object , canvas , canvas_start_point_v2f ,canvas_cur_point_v2f );
-                mouse_down = 0;
+                 mouse_cam_trackball(cam_object , canvas , canvas_start_point_v2f ,canvas_cur_point_v2f );
             });
 
 
@@ -235,24 +236,24 @@
                 var len_1f_scale = lenght_v4_xyz(cam_object.pos_v4f);
                 cam_object.pos_v4f = sub_v4v4_xyz( cam_object.pos_v4f ,  cam_object.at_v4f);
                 var len_1f = lenght_v4_xyz(cam_object.pos_v4f);
-                
-               if(p.deltaY > 0 && len_1f > scroll_min)
+                var speed = 0.1;
+               if(p.deltaY < 0 && len_1f > scroll_min)
                {
                     
                     cam_object.pos_v4f = [
-                        cam_object.pos_v4f[0]*(1 - 1/(len_1f_scale)),
-                        cam_object.pos_v4f[1]*(1 - 1/(len_1f_scale)),
-                        cam_object.pos_v4f[2]*(1 - 1/(len_1f_scale)),
+                        cam_object.pos_v4f[0]*(1 - speed),
+                        cam_object.pos_v4f[1]*(1 - speed),
+                        cam_object.pos_v4f[2]*(1 - speed),
                         1.0
                     ];
                     
                }
-               else if(p.deltaY < 0 && len_1f < scroll_max - 1)
+               else if(p.deltaY > 0 && len_1f < scroll_max - 1)
                {
                      cam_object.pos_v4f = [
-                        cam_object.pos_v4f[0]*(1 + 1/(len_1f_scale)),
-                        cam_object.pos_v4f[1]*(1 + 1/(len_1f_scale)),
-                        cam_object.pos_v4f[2]*(1 + 1/(len_1f_scale)),
+                        cam_object.pos_v4f[0]*(1 + speed),
+                        cam_object.pos_v4f[1]*(1 + speed),
+                        cam_object.pos_v4f[2]*(1 + speed),
                         1.0
                     ];
                     
@@ -580,19 +581,22 @@
 
                 //트렉볼 를 1대1로 맞춤
                 size = canvas.width;
-                if(size > canvas.height) size = canvas.height;
+                if(size < canvas.height) size = canvas.height;
 
                 radius = Math.sqrt(2 * size * size);
                 var unit_v4f = [
-                    (p_v2f[0] -size/2) / radius,
-                    (size / 2 - p_v2f[1])/radius, 
+                    ((p_v2f[0] -canvas.width/2) / ( canvas.width * canvas.width )) * radius,
+                    ((canvas.height / 2 - p_v2f[1])/(canvas.height * canvas.height )) * radius, 
                     0, 1.0
                 ];
-                unit_v4f[2] = Math.sqrt(1 - unit_v4f[0]*unit_v4f[0] - unit_v4f[1]*unit_v4f[1]);
-                if(unit_v4f[2] < 0) unit_v4f[2] = 0;
+                len =unit_v4f[0]*unit_v4f[0] - unit_v4f[1]*unit_v4f[1]; 
+
+                if(len <= 1)
+                    unit_v4f[2] = Math.sqrt(1 - unit_v4f[0]*unit_v4f[0] - unit_v4f[1]*unit_v4f[1]);
+                else  unit_v4f[2] = 0;
 
                 unit_v4f = normalize_v4_xyz(unit_v4f);
-
+                
                 return unit_v4f;
 
             }
@@ -604,58 +608,66 @@
 
                 if(start_p_v2f[0] == cur_p_v2f[0] && start_p_v2f[1] == cur_p_v2f[1])return;
 
-                
                 unit_start_v4f = calc_trackball_unit_vector(canvas , start_p_v2f);
                 unit_cur_v4f = calc_trackball_unit_vector(canvas , cur_p_v2f);
+
                 
+                unit_start_v4f = mul_m4_v4(view_cam_obj.view_mat4 , unit_start_v4f);
+                unit_cur_v4f = mul_m4_v4(view_cam_obj.view_mat4 , unit_cur_v4f);
+                
+               
                 dot_c_s_1f = dot_product_1f_xyz(unit_start_v4f , unit_cur_v4f);
                 
 
-                norm_c_s = Math.sqrt(dot_product_1f_xyz(unit_start_v4f , unit_cur_v4f));
+                norm_c_s = Math.sqrt(dot_product_1f_xyz(unit_cur_v4f , unit_start_v4f));
              
-                axis_v4f = cross_v4_xyz(unit_cur_v4f , unit_start_v4f);
-
-                theta_1f = Math.acos(dot_c_s_1f / (norm_c_s));
+                axis_v4f = cross_v4_xyz(unit_start_v4f , unit_cur_v4f );
                
-                theta_1f= theta_1f/3.0;
+                theta_1f = Math.acos(dot_c_s_1f / (norm_c_s));
                 
                 
+                axis_v4f = normalize_v4_xyz(axis_v4f);
+                 console.log(axis_v4f);
 
-                angle_axis_x = theta_1f * axis_v4f[0];
-                angle_axis_y = theta_1f * axis_v4f[1];
-                angle_axis_z = theta_1f * axis_v4f[2];
-                
-                 if(angle_axis_y > 0.05 && angle_axis_y < -0.05) return; 
+               
 
-                var cos_x = Math.cos(angle_axis_x);
-                var sin_x = Math.sin(angle_axis_x);
 
-                var cos_y = Math.cos(angle_axis_y);
-                var sin_y = Math.sin(angle_axis_y);
- 
-                var cos_z = Math.cos(angle_axis_z);
-                var sin_z = Math.sin(angle_axis_z);
-        
-              
 
-                 rotate_mat4 = [
-                    cos_y * cos_x  ,  cos_y*sin_x ,   -sin_y , 0,
-                    sin_z*sin_y*cos_x - cos_z*sin_x ,sin_x * sin_y *sin_z + cos_x * cos_z , sin_z * cos_y  , 0,
-                    cos_x*sin_y*cos_z + sin_x*sin_z , cos_z * sin_y * sin_x - sin_z * cos_x , cos_z * cos_y , 0, 
-                    0 ,0 ,0 , 1
+                var q = [
+                    Math.sin(theta_1f * 3.5) * axis_v4f[0],
+                    Math.sin(theta_1f * 3.5) * axis_v4f[1],
+                    Math.sin(theta_1f * 3.5) * axis_v4f[2],
+                    Math.cos(theta_1f * 3.5)
                 ];
                 
-                view_cam_obj.pos_v4f = sub_v4v4_xyz( view_cam_obj.pos_v4f ,  view_cam_obj.at_v4f);
+                rotate_mat4 = [
+                    1-2*q[1]*q[1]-2*q[2]*q[2] ,  2*(q[0]*q[1] - q[2]*q[3]) , 2*(q[0]*q[2] + q[1]*q[3]) , 0,
+                    2*(q[0]*q[1] + q[2]*q[3]) ,  1-2*q[0]*q[0]-2*q[2]*q[2] , 2*(q[1]*q[2] - q[0]*q[3]) , 0,
+                    2*(q[0]*q[2] - q[1]*q[3]) ,  2*(q[1]*q[2] + q[0]*q[3]) , 1-2*q[0]*q[0]-2*q[1]*q[1] , 0,
+                    0 , 0 , 0 , 1
+                     
+                ];
     
-                view_cam_obj.pos_v4f = [
+               
+                view_cam_obj.pos_v4f = sub_v4v4_xyz( view_cam_obj.pos_v4f ,  view_cam_obj.at_v4f);
+               
+                 pos_v4f = [
                     rotate_mat4[0]  * view_cam_obj.pos_v4f[0] + rotate_mat4[1]  * view_cam_obj.pos_v4f[1] + rotate_mat4[2]  * view_cam_obj.pos_v4f[2] + rotate_mat4[3]  * view_cam_obj.pos_v4f[3] ,
                     rotate_mat4[4]  * view_cam_obj.pos_v4f[0] + rotate_mat4[5]  * view_cam_obj.pos_v4f[1] + rotate_mat4[6]  * view_cam_obj.pos_v4f[2] + rotate_mat4[7]  * view_cam_obj.pos_v4f[3] ,
                     rotate_mat4[8]  * view_cam_obj.pos_v4f[0] + rotate_mat4[9]  * view_cam_obj.pos_v4f[1] + rotate_mat4[10] * view_cam_obj.pos_v4f[2] + rotate_mat4[11] * view_cam_obj.pos_v4f[3] , 
-                    rotate_mat4[12] * view_cam_obj.pos_v4f[0] + rotate_mat4[13] * view_cam_obj.pos_v4f[1] + rotate_mat4[14] * view_cam_obj.pos_v4f[2] + rotate_mat4[15] * view_cam_obj.pos_v4f[3] ,
+                    1,
                 ];
-
+                dot_u_p = dot_product_1f_xyz(normalize_v4_xyz(pos_v4f), [0 , 1, 0 ,1]);
+                
+                if(dot_u_p < 0.9 && dot_u_p > -0.9)
+                {
+                    view_cam_obj.pos_v4f =pos_v4f;
+                
+                }    
+               
                 view_cam_obj.pos_v4f = add_v4v4_xyz( view_cam_obj.pos_v4f ,  view_cam_obj.at_v4f);
 
+               
             }
             
         }

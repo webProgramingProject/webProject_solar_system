@@ -70,6 +70,48 @@ function cross_v4_xyz(v1_v4f ,v2_v4f)
     return re_v4f;
 }
 
+function transpose_m4(m)
+{
+    var mat = [
+        m[0] , m[4] , m[8] , m[12] ,
+        m[1] , m[5] , m[9] , m[13] ,
+        m[2] , m[6] , m[10] , m[14] ,
+        m[3] , m[7] , m[11] , m[15] , 
+    ];
+
+    return mat;
+}
+
+
+function mul_m4_m4(m1 , m2)
+{
+    var mat = [];
+    for(var i = 0; i < 4; i++)
+    {
+        for(var j = 0; j < 4; j++)
+        {
+            mat[i*4 + j] = (
+                m1[i*4 + 0] * m2[0*4 + j] + 
+                m1[i*4 + 1] * m2[1*4 + j] +
+                m1[i*4 + 2] * m2[2*4 + j] +
+                m1[i*4 + 3] * m2[3*4 + j] 
+            );
+        }
+    }
+    return mat;
+}
+
+function mul_m4_v4(m ,v)
+{
+    var v_out = [
+        m[0] * v[0] + m[1] * v[1] + m[2] * v[2] + m[3] * v[3],
+        m[4] * v[0] + m[5] * v[1] + m[6] * v[2] + m[7] * v[3],
+        m[8] * v[0] + m[9] * v[1] + m[10] * v[2] + m[11] * v[3],
+        m[12] * v[0] + m[13] * v[1] + m[14] * v[2] + m[15] * v[3]
+    ];
+    return v_out;
+
+}
 
 class model_object
 {

@@ -98,7 +98,7 @@
             highp float exp = material.shineness_mf;
             
    			vec3 R =reflect(-L.xyz, N.xyz);
-            mediump float dot_R_V = dot(R , V.xyz);
+            highp float dot_R_V = dot(R , V.xyz);
             dot_R_V = max(dot_R_V ,0.0);
             dot_R_V = pow(dot_R_V , exp);
             vec4 specular = (dot_R_V * light.specular_v4 * material.specular_v4)/denom ;
@@ -132,7 +132,7 @@
            
             vec4 color = vec4( (v_pos_v4.y + 1.0)/2.0 , (v_pos_v4.y + 1.0)/2.0 , (v_pos_v4.y + 1.0)/2.0 , 1.0  );
 
-            mediump float luminary = 1.0 - 2.0 * float(u_material_13f.luminary_1i);         
+            highp float luminary = 1.0 - 2.0 * float(u_material_13f.luminary_1i);         
             vec4 norm = vec4(v_norm_v4.x* luminary , v_norm_v4.y* luminary, v_norm_v4.z* luminary , 1.0);
             light_t light = phong_calc(norm,v_pos_v4,u_cam_pos_v4,u_light_20f,u_material_13f);
            
@@ -144,8 +144,9 @@
             texcoord_v2 = texcoord_v2 + vec2(0 , 0.5) * float(u_n_mode_1i*int(1.0 - light.diffuse_v4.x));
             vec4 tex_color = texture2D(u_texture_s2D ,  texcoord_v2); 
 
-            mediump float ambient_1f = float(u_n_mode_1i);
-            light.ambient_v4 = light.ambient_v4  +  float(int(1.0 - light.diffuse_v4.x))*0.27*vec4( ambient_1f , ambient_1f  , ambient_1f , 1.0);
+            highp float ambient_1f = float(u_n_mode_1i);
+            light.ambient_v4 = light.ambient_v4  +  float(int(1.0 - light.diffuse_v4.x))*0.6*vec4( ambient_1f , ambient_1f  , ambient_1f/3.75 , 1.0);
+           
             vec4 light_sum = vec4(light.specular_v4.xyz + light.diffuse_v4.xyz + light.ambient_v4.xyz , 1.0);
             
             gl_FragColor =tex_color * light_sum + rim_light;
@@ -227,7 +228,10 @@
 
     // 📌 추가: 해당 항목으로 스크롤
     targetItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
+    }
+
+  
+
 
     </script>
 
@@ -255,6 +259,7 @@
             padding-top : calc (300 / 1000 * 100%);
             margin:0;
             position: relative;
+            
         }
         #banner {
             width: 100%; height: 10%;
@@ -262,10 +267,8 @@
             position:absolute;
             z-index: 10;
         }
-        #left {
-            border-radius: 2%;
-            width: 22%; height: 80%;
-            overflow:scroll;
+        #left_content {
+            border-radius: 2%; 
             color: white;
             background: rgba(256, 256, 256, 0.1);
             counter-reset: nav-counter;
@@ -291,17 +294,29 @@
             bottom: 0%;
             position: absolute;
         }
-        #left, #right {
-            overflow: auto;
+        #left_content, #right {
+             /* 부모 요소에서는 스크롤 비활성화 */
+            word-break: keep-all;
+            white-space: pre-line;
+            padding: 1% 2%;
+            min-width: 0;
+        }
+
+        #left_content {
+            
+            display: none;
+            overflow-y: scroll; /* 자식 요소에서만 스크롤 활성화 */
+            max-height: 85%; /* 필요 시 높이 제한 추가 */
             scrollbar-width: thin; /* Firefox */
             scrollbar-color: rgba(255,255,255,0.2) rgba(255,255,255,0.1); /* Firefox */
             word-break: keep-all;
             overflow-wrap: break-word;
             white-space: pre-line;
-            padding: 10px; 
+            padding: 10px;
             min-width: 0;
         }
 
+       
         /* WebKit (Chrome, Safari 등등) */
         #left::-webkit-scrollbar,
         #right::-webkit-scrollbar {
@@ -394,6 +409,28 @@
             font-size: 20px;
         }
 
+        #left{
+            width: 3%; height: 3%;
+            position: absolute;
+            top: 12%;
+            left: 2%;
+            z-index: 10;
+        } 
+        #toggle_left_button{
+
+            z-index: 10;
+            border-radius: 15%;
+         
+            color: white;
+            background-color: rgba(150, 150, 150, 0.2);
+            
+          
+            display: flex;
+            align-items: center; /* 수직 정렬 */
+            justify-content: center; /* 수평 정렬 */
+           
+
+        }
     </style>
 </head>
 <body>
@@ -402,8 +439,13 @@
     <div id = "banner">
         <h1 id = "site_title" class = "font_nanum" >우주의 창, 태양계 이야기</h1>
     </div>
-<div id = "contents">
+<div id = "contents" >
+    
     <div id = "left">
+        <button id = "toggle_left_button" >
+            ⪢
+        </button>
+        <div id = "left_content"> 
         <div class="nav font_nanum">
             <div class="nav-item" onclick="toggleItem(event, this)">0. 태양계<span class="toggle-button">∨</span>
                 <div class="sub-items">
@@ -655,6 +697,7 @@
             </div>
         </div>
     </div>
+    </div>
     <div id = "right">  
         <button onclick="open_nav_item(0); change_planet_selection(0)">0. 태양계</button>
         <button onclick="open_nav_item(1); change_planet_selection(1)">1. 태양</button>
@@ -676,3 +719,34 @@
     </div>
     </body>
 </html>
+
+
+<script>
+    document.getElementById("toggle_left_button").addEventListener("click", function() {
+    var btn = document.getElementById("toggle_left_button");
+    var content = document.getElementById("left_content");
+    var left = document.getElementById("left");
+    console.log(left.style.overflow);
+    if (content.style.display === "none" || content.style.display === "") {
+
+        content.style.display = "block"; // 펼치기
+        content.style.height = "100%";
+        content.style.width = "100%";
+
+        left.style.width = "30%";
+        left.style.height = "80%";
+        
+        btn.textContent = '⪡';
+    } else {
+        content.style.display = "none"; // 접기
+        content.style.height = "0%";
+        content.style.width = "0%";  
+        
+        left.style.width = "3%";
+        left.style.height = "3%";
+        
+        btn.textContent = '⪢';
+    }
+    });
+
+</script>
