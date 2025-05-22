@@ -431,6 +431,11 @@
            
 
         }
+
+
+        @media screen and (max-width : 1000px) {
+            
+        }
     </style>
 </head>
 <body>
@@ -727,13 +732,22 @@
     var content = document.getElementById("left_content");
     var left = document.getElementById("left");
     console.log(left.style.overflow);
+    var viewport_width = window.innerWidth;
+
     if (content.style.display === "none" || content.style.display === "") {
 
         content.style.display = "block"; // 펼치기
         content.style.height = "100%";
         content.style.width = "100%";
 
-        left.style.width = "30%";
+        if(viewport_width < 1000)
+        {
+             left.style.width = "80%";
+        }
+        else{
+             left.style.width = "30%";
+        }
+       
         left.style.height = "80%";
         
         btn.textContent = '⪡';
