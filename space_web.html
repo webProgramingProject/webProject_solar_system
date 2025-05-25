@@ -701,16 +701,16 @@
     <div id = "right">  
         <button class = "toggle-btn" onclick="toggleMenu()">=</button>
         <div class = "menu-items" id = "menu">
-        <button class = "menu-item" onclick="open_nav_item(0); change_planet_selection(0)">0. 태양계</button>
-        <button class = "menu-item" onclick="open_nav_item(1); change_planet_selection(1)">1. 태양</button>
-        <button class = "menu-item" onclick="open_nav_item(2); change_planet_selection(2)">2. 수성</button>
-        <button class = "menu-item" onclick="open_nav_item(3); change_planet_selection(3)">3. 금성</button>
-        <button class = "menu-item" onclick="open_nav_item(4); change_planet_selection(4)">4. 지구</button>
-        <button class = "menu-item" onclick="open_nav_item(5); change_planet_selection(5)">5. 화성</button>
-        <button class = "menu-item" onclick="open_nav_item(6); change_planet_selection(6)">6. 목성</button>
-        <button class = "menu-item" onclick="open_nav_item(7); change_planet_selection(7)">7. 토성</button>
-        <button class = "menu-item" onclick="open_nav_item(8); change_planet_selection(8)">8. 천왕성</button>
-        <button class = "menu-item" onclick="open_nav_item(9); change_planet_selection(9)">9. 해왕성</button>
+        <button class = "menu-item" onclick="toggle_right_up(); open_nav_item(0); change_planet_selection(0); resize()">0. 태양계</button>
+        <button class = "menu-item" onclick="toggle_right_up(); open_nav_item(1); change_planet_selection(1); resize()">1. 태양</button>
+        <button class = "menu-item" onclick="toggle_right_up(); open_nav_item(2); change_planet_selection(2); resize()">2. 수성</button>
+        <button class = "menu-item" onclick="toggle_right_up(); open_nav_item(3); change_planet_selection(3); resize()">3. 금성</button>
+        <button class = "menu-item" onclick="toggle_right_up(); open_nav_item(4); change_planet_selection(4); resize()">4. 지구</button>
+        <button class = "menu-item" onclick="toggle_right_up(); open_nav_item(5); change_planet_selection(5); resize()">5. 화성</button>
+        <button class = "menu-item" onclick="toggle_right_up(); open_nav_item(6); change_planet_selection(6); resize()">6. 목성</button>
+        <button class = "menu-item" onclick="toggle_right_up(); open_nav_item(7); change_planet_selection(7); resize()">7. 토성</button>
+        <button class = "menu-item" onclick="toggle_right_up(); open_nav_item(8); change_planet_selection(8); resize()">8. 천왕성</button>
+        <button class = "menu-item" onclick="toggle_right_up(); open_nav_item(9); change_planet_selection(9); resize()">9. 해왕성</button>
         </div>
     </div>
 </div>
@@ -728,13 +728,26 @@
     var btn = document.getElementById("toggle_left_button");
     var content = document.getElementById("left_content");
     var left = document.getElementById("left");
+     var viewport_width = window.innerWidth;
     console.log(left.style.overflow);
     
+ 
+    
+    document.getElementById("toggle_left_button").addEventListener("click", toggle_right);
 
-    document.getElementById("toggle_left_button").addEventListener("click", function() {
-    let viewport_width = window.innerWidth;
-    if (content.style.display === "none" || content.style.display === "") {
 
+    function toggle_right() {
+   
+        if (content.style.display === "none" || content.style.display === "") {
+            toggle_right_up();
+        } else {
+            toggle_right_down();
+        }
+        resize();
+    };
+
+
+    function toggle_right_up() {
         content.style.display = "block"; // 펼치기
         content.style.height = "100%";
         content.style.width = "100%";
@@ -744,24 +757,29 @@
         } else {
             left.style.width = "30%";
         }
-        
+
         left.style.height = "80%";
-        
+
+
         btn.textContent = '⪡';
-    } else {
+        
+    }
+
+    function toggle_right_down() {
         content.style.display = "none"; // 접기
         content.style.height = "0%";
         content.style.width = "0%";  
-        
         left.style.width = "3%";
         left.style.height = "3%";
-        
         btn.textContent = '⪢';
     }
-    });
 
 
-    window.addEventListener("resize", function () {
+
+
+    window.addEventListener("resize",resize );
+
+    function resize() {
     let viewport_width = window.innerWidth;
     console.log("!");
     if (viewport_width < 1025) {
@@ -769,7 +787,7 @@
     } else {
        left.style.width = "30%";
     }
-    });
+    }
 
 
 </script>
