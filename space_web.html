@@ -19,6 +19,7 @@
         uniform mat4 u_scale_m4;
         uniform mat4 u_rotate_m4;
         uniform mat4 u_translate_m4;
+        uniform mat4 u_rot_axial_tilt_m4;
 
         uniform mat4 u_view_m4;
 
@@ -35,12 +36,12 @@
 
             pos.z = -pos.z;
 
-            v_norm_v4 = u_rotate_m4 *  pos;
-            v_pos_v4 =  u_translate_m4 *u_rotate_m4 * u_scale_m4 * pos;
+            v_norm_v4 = u_rot_axial_tilt_m4 * u_rotate_m4  *  pos;
+            v_pos_v4 =  u_translate_m4 *  u_scale_m4 *u_rot_axial_tilt_m4 * u_rotate_m4 * pos;
          
             v_texcoord_v2 = a_tex_coord_v2;
            
-            gl_Position =u_proj_m4* u_view_m4 * u_translate_m4 *u_rotate_m4*u_scale_m4 * pos;
+            gl_Position =u_proj_m4* u_view_m4 * u_translate_m4 *u_rot_axial_tilt_m4 * u_rotate_m4*u_scale_m4  * pos;
            
     
         
@@ -122,7 +123,7 @@
             float dot_N_V = dot( V.xyz , N.xyz);
             
             float f = 1.0 - dot_N_V;
-            f = pow(f , 4.0);
+            f = pow(f , 7.0);
             return rim_color_v4 * vec4(f , f , f, 1.0) ;
 
         }
@@ -145,7 +146,7 @@
             vec4 tex_color = texture2D(u_texture_s2D ,  texcoord_v2); 
 
             highp float ambient_1f = float(u_n_mode_1i);
-            light.ambient_v4 = light.ambient_v4  +  float(int(1.0 - light.diffuse_v4.x))*0.6*vec4( ambient_1f , ambient_1f  , ambient_1f/3.75 , 1.0);
+            light.ambient_v4 = light.ambient_v4  +  float(int(1.0 - light.diffuse_v4.x))*0.6*vec4( ambient_1f , ambient_1f  , ambient_1f/3.225 , 1.0);
            
             vec4 light_sum = vec4(light.specular_v4.xyz + light.diffuse_v4.xyz + light.ambient_v4.xyz , 1.0);
             
@@ -270,11 +271,10 @@
         #left_content {
             border-radius: 2%; 
             color: white;
-            background: rgba(256, 256, 256, 0.1);
+            background: rgba(50, 50, 50, 0.4);
             counter-reset: nav-counter;
             position: absolute;
-            top: 12%;
-            left: 2%;
+          
             z-index: 10;
         }
         #right {
@@ -308,7 +308,7 @@
             overflow-y: scroll; /* 자식 요소에서만 스크롤 활성화 */
             max-height: 85%; /* 필요 시 높이 제한 추가 */
             scrollbar-width: thin; /* Firefox */
-            scrollbar-color: rgba(255,255,255,0.2) rgba(255,255,255,0.1); /* Firefox */
+            scrollbar-color: rgba(255,255,255,0.2) rgba(255,255,255,0.0); /* Firefox */
             word-break: keep-all;
             overflow-wrap: break-word;
             white-space: pre-line;
@@ -412,7 +412,7 @@
         #left{
             width: 3%; height: 3%;
             position: absolute;
-            top: 12%;
+            top: 15%;
             left: 2%;
             z-index: 10;
         } 
@@ -431,11 +431,10 @@
            
 
         }
+        
+        
 
-
-        @media screen and (max-width : 1000px) {
-            
-        }
+       
     </style>
 </head>
 <body>
@@ -727,27 +726,26 @@
 
 
 <script>
-    document.getElementById("toggle_left_button").addEventListener("click", function() {
     var btn = document.getElementById("toggle_left_button");
     var content = document.getElementById("left_content");
     var left = document.getElementById("left");
     console.log(left.style.overflow);
-    var viewport_width = window.innerWidth;
+    
 
+    document.getElementById("toggle_left_button").addEventListener("click", function() {
+    let viewport_width = window.innerWidth;
     if (content.style.display === "none" || content.style.display === "") {
 
         content.style.display = "block"; // 펼치기
         content.style.height = "100%";
         content.style.width = "100%";
 
-        if(viewport_width < 1000)
-        {
-             left.style.width = "80%";
+        if (viewport_width < 1025) {
+            left.style.width = "80%";
+        } else {
+            left.style.width = "30%";
         }
-        else{
-             left.style.width = "30%";
-        }
-       
+        
         left.style.height = "80%";
         
         btn.textContent = '⪡';
@@ -762,5 +760,17 @@
         btn.textContent = '⪢';
     }
     });
+
+
+    window.addEventListener("resize", function () {
+    let viewport_width = window.innerWidth;
+    console.log("!");
+    if (viewport_width < 1025) {
+        left.style.width = "80%";
+    } else {
+       left.style.width = "30%";
+    }
+    });
+
 
 </script>

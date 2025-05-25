@@ -107,9 +107,17 @@
     
             var canvas = document.querySelector("#c");
             var render_scale = 1.5;
+            
             canvas.setAttribute("width", window.innerWidth * render_scale);
             canvas.setAttribute("height", window.innerHeight * render_scale);
 
+
+            window.addEventListener("resize", function () {
+                canvas.setAttribute("width", window.innerWidth * render_scale);
+                canvas.setAttribute("height", window.innerHeight * render_scale);
+                
+                gl.viewport(0, 0, canvas.width , canvas.height);
+            });
             var gl = canvas.getContext("webgl");
 
             const cam_object = new view_cam();
@@ -275,7 +283,8 @@
             var u_trans_loc_m4f = gl.getUniformLocation(program, "u_translate_m4")
             var u_rotate_loc_m4f = gl.getUniformLocation(program , "u_rotate_m4");
             var u_scale_loc_m4f = gl.getUniformLocation(program , "u_scale_m4");
-    
+            var u_rot_axial_tilt_loc_m4f = gl.getUniformLocation(program , "u_rot_axial_tilt_m4");
+
             var u_view_loc_m4f = gl.getUniformLocation(program , "u_view_m4");
             var u_proj_loc_m4f = gl.getUniformLocation(program , "u_proj_m4");
             var u_cam_pos_loc_v4f = gl.getUniformLocation(program , "u_cam_pos_v4");
@@ -302,12 +311,13 @@
     
             var planets_rot = [0.01694 , 0.00411 , 1 , 0.975 , 2.4, 2.24 , 1.411 , 1.5]; // 행성자전 주기
             var planet_orbit = [2.073 , 1.502 ,  1 , 0.531 , 1/12 * 5 , 1/29.5 * 10 , 1/84 * 20 , 1/165 * 30]
-    
+            
+            var planets_axial_tilt = [0.000614 ,3.096,0.93838,0.04396,0.546 , 0.4665 ,1.7064 ,0.4943];
     
             var planet = [];
             var center_planet = init_sphere(gl ,sphere_object , "https://raw.githubusercontent.com/m98541/web1/refs/heads/main/sun.jpg");
              
-             
+         
             center_planet.material.ambient_v4f = [1.0 , 1.0 , 1.0 , 1.0];
             center_planet.material.diffuse_v4f = [1.0 , 1.0 , 1.0 , 1.0];
             center_planet.material.luminary_1i = 1;
@@ -326,7 +336,8 @@
             planet[7] = init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/graphic/planet_7.jpg");
             
             var disk =  init_sphere(gl , sphere_object , "https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/graphic/fake_disk.png");
-            
+           
+            sun.axial_tilt_1f = PI / 16.0;
             sun.scale_v4f = [ 109/4, 109/4, 109/4, 1];
             
             sun.material.glUniformMaterialLocation(gl,program,"u_material_13f");
@@ -338,6 +349,8 @@
                 planet[i].material.glUniformMaterialLocation(gl,program,"u_material_13f");
                 planet[i].pos_v4f = [109/2 + planets_distance[i]*50 , 0 , 0 , 1];
                 
+                planet[i].axial_tilt_1f = planets_axial_tilt[i];
+
                 planet[i].scale_v4f = [0.9 +  size[i]*0.9 ,0.9 + size[i]*0.9  , 0.9 + size[i]*0.9 , 1];
     
                 var init_pos = (PI / 180) * Math.random()*360;
@@ -353,7 +366,7 @@
             disk.material.rim_color_v4f = [0.0 , 0.0 , 0.0 ,0.0];
             disk.pos_v4f = planet[5].pos_v4f;
             disk.scale_v4f =  [planet[5].scale_v4f[0]*2, 10 ,  planet[5].scale_v4f[2]*2];
-           
+            disk.axial_tilt_1f =planets_axial_tilt[5];
             center_planet.pos_v4f = sun.pos_v4f;
             center_planet.scale_v4f = sun.scale_v4f;
             //0 all solar system 1 sun 2....
@@ -430,7 +443,6 @@
     
     
          
-            gl.viewport(0, 0, canvas.width , canvas.height);
             gl.enable(gl.CULL_FACE);
             gl.enable(gl.DEPTH_TEST);
     
@@ -483,7 +495,6 @@
                   for(var i = 0; i < 8; i++)
                     {
 
-                       
                         planet[i].rot_v4f[3] +=planets_rot[i] * earth_rot;
                         
                         x =  planet[i].pos_v4f[0] * Math.cos(planet_orbit[i]* earth_orbit) -   planet[i].pos_v4f[2] * Math.sin(planet_orbit[i]* earth_orbit); 
@@ -501,7 +512,7 @@
                             disk.material.luminary_1i = 0;
                             disk.pos_v4f = planet[i].pos_v4f;
                             disk.rot_v4f = planet[i].rot_v4f;
-                            disk.scale_v4f =  [planet[5].scale_v4f[0]*2, 0.1 ,  planet[5].scale_v4f[2]*2];
+                            disk.scale_v4f =  [planet[5].scale_v4f[0]*2.7, 0.1 ,  planet[5].scale_v4f[2]*2.7];
                             
                             draw_sphere(gl,disk);
                             gl.disable(gl.BLEND);
@@ -537,7 +548,8 @@
                 
                
                 new_sphere.pos_v4f = [0, 0 , 0 , 1];
-                new_sphere.rot_v4f = [0 , 1, 0 , 0];
+                new_sphere.rot_v4f = [0.0 , 1.0 , 0.0 , 0];
+                new_sphere.rot_v4f = normalize_v4_xyz( new_sphere.rot_v4f );
                 new_sphere.scale_v4f = [1 , 1 ,1 ,1];
     
                 return new_sphere
@@ -553,10 +565,30 @@
                 trans_object.translate(draw_sphere.pos_v4f);
                 trans_object.rotate(draw_sphere.rot_v4f);
                 trans_object.scale( draw_sphere.scale_v4f);
+
+
+                rot_axial_tilt_v4f = [0.0 , 1.0 , 0.2*draw_sphere.axial_tilt_1f , draw_sphere.axial_tilt_1f ];
+                rot_axial_tilt_v4f = normalize_v4_xyz(rot_axial_tilt_v4f);
+                var q = [
+                    Math.sin(rot_axial_tilt_v4f[3]) * rot_axial_tilt_v4f[0],
+                    Math.sin(rot_axial_tilt_v4f[3]) * rot_axial_tilt_v4f[1],
+                    Math.sin(rot_axial_tilt_v4f[3]) * rot_axial_tilt_v4f[2],
+                    Math.cos(rot_axial_tilt_v4f[3])
+                ];
+
+                rot_axial_tilt_mat4 = [
+                    1-2*q[1]*q[1]-2*q[2]*q[2] ,  2*(q[0]*q[1] - q[2]*q[3]) , 2*(q[0]*q[2] + q[1]*q[3]) , 0,
+                    2*(q[0]*q[1] + q[2]*q[3]) ,  1-2*q[0]*q[0]-2*q[2]*q[2] , 2*(q[1]*q[2] - q[0]*q[3]) , 0,
+                    2*(q[0]*q[2] - q[1]*q[3]) ,  2*(q[1]*q[2] + q[0]*q[3]) , 1-2*q[0]*q[0]-2*q[1]*q[1] , 0,
+                    0 , 0 , 0 , 1
+
+                ];
+
+               
                 gl.uniformMatrix4fv(u_trans_loc_m4f, 0, trans_object.trans_mat4);
                 gl.uniformMatrix4fv(u_rotate_loc_m4f, 0, trans_object.rotate_mat4);
                 gl.uniformMatrix4fv(u_scale_loc_m4f, 0, trans_object.scale_mat4);
-
+                gl.uniformMatrix4fv(u_rot_axial_tilt_loc_m4f , 0 , rot_axial_tilt_mat4);
                 
                 draw_sphere.material.glUniformMaterial(gl);
                 gl.bindTexture(gl.TEXTURE_2D , draw_sphere.sphere_texture_info.texture );
@@ -627,12 +659,7 @@
                 
                 
                 axis_v4f = normalize_v4_xyz(axis_v4f);
-                 console.log(axis_v4f);
-
-               
-
-
-
+            
                 var q = [
                     Math.sin(theta_1f * 3.5) * axis_v4f[0],
                     Math.sin(theta_1f * 3.5) * axis_v4f[1],

@@ -70,6 +70,7 @@ class sphere
     pos_v4f;
     rot_v4f;
     scale_v4f;
+    axial_tilt_1f;
 
     sphere_vbo;
     sphere_color_buffer;
@@ -90,7 +91,7 @@ class sphere
         this.sphere_texture_coord_buffer = [];
         this.sphere_vbo_len = 0;
         this.sphere_texture_coord_buffer_len = 0;
-
+        this.axial_tilt_1f = 0.0;
         this.material = new material();
     }
 

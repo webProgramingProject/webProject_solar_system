@@ -43,7 +43,7 @@ function normalize_v4_xyz(v_v4f)
 {
     var len_1f = lenght_v4_xyz(v_v4f);
    
-    var re_v4f = [v_v4f[0] / len_1f ,v_v4f[1] / len_1f , v_v4f[2] / len_1f , 1];
+    var re_v4f = [v_v4f[0] / len_1f ,v_v4f[1] / len_1f , v_v4f[2] / len_1f , v_v4f[3]];
     return re_v4f;
 }
 
@@ -151,28 +151,20 @@ class model_object
     rotate(rot_v4f)
     {
         this.rotate_angle_v4f = rot_v4f;
-
-        var angle_axis_x = rot_v4f[3] * rot_v4f[0];
-        var angle_axis_y = rot_v4f[3] * rot_v4f[1];
-        var angle_axis_z = rot_v4f[3] * rot_v4f[2];
-
-
-        var cos_x = Math.cos(angle_axis_x);
-        var sin_x = Math.sin(angle_axis_x);
-
-        var cos_y = Math.cos(angle_axis_y);
-        var sin_y = Math.sin(angle_axis_y);
- 
-        var cos_z = Math.cos(angle_axis_z);
-        var sin_z = Math.sin(angle_axis_z);
         
-    
+         var q = [
+            Math.sin(rot_v4f[3]) * rot_v4f[0],
+            Math.sin(rot_v4f[3]) * rot_v4f[1],
+            Math.sin(rot_v4f[3]) * rot_v4f[2],
+            Math.cos(rot_v4f[3])
+        ];
         
         this.rotate_mat4 = [
-            cos_z*cos_y ,   -1*sin_z*cos_y   ,sin_y   ,0  ,     
-            sin_z*cos_x + cos_z*sin_y*sin_x,  cos_z*cos_x - sin_z*sin_y*sin_x,-1*cos_y*sin_x  ,0,
-            sin_z*sin_x - cos_z*sin_y*cos_x, cos_z*sin_x + sin_z*sin_y*cos_x ,cos_y*cos_x , 0,
-            0 , 0 , 0, 1
+            1-2*q[1]*q[1]-2*q[2]*q[2] ,  2*(q[0]*q[1] - q[2]*q[3]) , 2*(q[0]*q[2] + q[1]*q[3]) , 0,
+            2*(q[0]*q[1] + q[2]*q[3]) ,  1-2*q[0]*q[0]-2*q[2]*q[2] , 2*(q[1]*q[2] - q[0]*q[3]) , 0,
+            2*(q[0]*q[2] - q[1]*q[3]) ,  2*(q[1]*q[2] + q[0]*q[3]) , 1-2*q[0]*q[0]-2*q[1]*q[1] , 0,
+            0 , 0 , 0 , 1
+             
         ];
 
     }
