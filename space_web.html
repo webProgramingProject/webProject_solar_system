@@ -10,6 +10,7 @@
     <link rel = "stylesheet" href = "Menu_bar.css">
     <script src = "shooting_star.js"></script>
     <script src = "Menu_bar.js"></script>
+    <link rel = "stylesheet" href = "Menu_button.css">
 
     <script id = "vertex-shader" type="x-shader/x-vertex">
         precision highp float;
@@ -278,15 +279,18 @@
             z-index: 10;
         }
         #right {
-            width: 8%; height: 80%; 
-            overflow-x:hidden;
-            overflow-y:scroll;
+            width: 15%; height: 80%; 
+            overflow: hidden;
             color: white;
             position: absolute;
-            top: 10%;
+            top: 15%;
             right: 0%;
             z-index: 10;
-          
+        }
+        .menu-items {
+            overflow-y: scroll;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.2) rgba(255,255,255,0.0);
         }
         #bottom {
             width: 100%; height: 10%; 
@@ -294,11 +298,10 @@
             bottom: 0%;
             position: absolute;
         }
-        #left_content, #right {
+        #left-content, #right {
              /* 부모 요소에서는 스크롤 비활성화 */
             word-break: keep-all;
             white-space: pre-line;
-            padding: 1% 2%;
             min-width: 0;
         }
 
@@ -312,7 +315,6 @@
             word-break: keep-all;
             overflow-wrap: break-word;
             white-space: pre-line;
-            padding: 10px;
             min-width: 0;
         }
 
@@ -417,23 +419,17 @@
             z-index: 10;
         } 
         #toggle_left_button{
-
             z-index: 10;
             border-radius: 15%;
-         
             color: white;
-            background-color: rgba(150, 150, 150, 0.2);
-            
-          
+            background-color: rgba(46, 128, 121, 0.7);
+            padding: 11px;
             display: flex;
             align-items: center; /* 수직 정렬 */
             justify-content: center; /* 수평 정렬 */
            
 
         }
-        
-        
-
        
     </style>
 </head>
@@ -703,16 +699,19 @@
     </div>
     </div>
     <div id = "right">  
-        <button onclick="open_nav_item(0); change_planet_selection(0)">0. 태양계</button>
-        <button onclick="open_nav_item(1); change_planet_selection(1)">1. 태양</button>
-        <button onclick="open_nav_item(2); change_planet_selection(2)">2. 수성</button>
-        <button onclick="open_nav_item(3); change_planet_selection(3)">3. 금성</button>
-        <button onclick="open_nav_item(4); change_planet_selection(4)">4. 지구</button>
-        <button onclick="open_nav_item(5); change_planet_selection(5)">5. 화성</button>
-        <button onclick="open_nav_item(6); change_planet_selection(6)">6. 목성</button>
-        <button onclick="open_nav_item(7); change_planet_selection(7)">7. 토성</button>
-        <button onclick="open_nav_item(8); change_planet_selection(8)">8. 천왕성</button>
-        <button onclick="open_nav_item(9); change_planet_selection(9)">9. 해왕성</button>
+        <button class = "toggle-btn" onclick="toggleMenu()">=</button>
+        <div class = "menu-items" id = "menu">
+        <button class = "menu-item" onclick="open_nav_item(0); change_planet_selection(0)">0. 태양계</button>
+        <button class = "menu-item" onclick="open_nav_item(1); change_planet_selection(1)">1. 태양</button>
+        <button class = "menu-item" onclick="open_nav_item(2); change_planet_selection(2)">2. 수성</button>
+        <button class = "menu-item" onclick="open_nav_item(3); change_planet_selection(3)">3. 금성</button>
+        <button class = "menu-item" onclick="open_nav_item(4); change_planet_selection(4)">4. 지구</button>
+        <button class = "menu-item" onclick="open_nav_item(5); change_planet_selection(5)">5. 화성</button>
+        <button class = "menu-item" onclick="open_nav_item(6); change_planet_selection(6)">6. 목성</button>
+        <button class = "menu-item" onclick="open_nav_item(7); change_planet_selection(7)">7. 토성</button>
+        <button class = "menu-item" onclick="open_nav_item(8); change_planet_selection(8)">8. 천왕성</button>
+        <button class = "menu-item" onclick="open_nav_item(9); change_planet_selection(9)">9. 해왕성</button>
+        </div>
     </div>
 </div>
     <div id = "bottom"><!--참고 사이트, 출처, 조원-->

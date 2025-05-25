@@ -22,12 +22,14 @@
             display: block;
             position: absolute;
         }
-        #right button {
+
+        .menu-items button {
             font-family: NanumBarunPen;
             margin: 0 auto;
+            float: right;
             margin-bottom : 10px;
             padding: 10% 2%;
-            width:80%;
+            width:50%;
             font-size: 10px;
             background: rgba(255,255,255,0.8);
             border: none;
@@ -35,4 +37,5 @@
             cursor: pointer;
             font-weight: bold;
             text-align: center;
+            clear: both;
         }

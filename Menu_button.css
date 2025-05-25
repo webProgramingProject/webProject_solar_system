@@ -1,0 +1,35 @@
+body {
+      font-family: Arial, sans-serif;
+    }
+
+    #right {
+      width: 8%; height: 80%
+    }
+
+    .toggle-btn {
+      background-color: rgba(47, 55, 163, 0.7);
+      color: white;
+      text-align: center;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      padding: 15px;
+      position: absolute;
+      top: 0%;
+      right: 3%;
+    }
+
+    .menu-items {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease;
+    }
+
+    .menu-items.active {
+      max-height: 80%; /* 충분히 큰 값 */
+    }
+
+
+    .menu-item:hover {
+      background-color: #ddd;
+    }
