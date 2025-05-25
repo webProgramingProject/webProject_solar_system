@@ -6,12 +6,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>우주의 창, 태양계 이야기</title>
+
+    <link rel="stylesheet" href="jquery.lightbox.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+    <script src="jquery.lightbox.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('a.light').lightBox();
+        });
+    </script>
+
     <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-barun-pen.css" rel="stylesheet">
     <link rel = "stylesheet" href = "Menu_bar.css">
     <script src = "shooting_star.js"></script>
     <script src = "Menu_bar.js"></script>
     <link rel = "stylesheet" href = "Menu_button.css">
 
+    
     <script id = "vertex-shader" type="x-shader/x-vertex">
         precision highp float;
         attribute vec4 a_position_v4;
@@ -289,10 +301,12 @@
             transition: width 0.3s ease;
         }
         #right.collapsed{
-            width: 3%;
-            height: 80%;
+            overflow: visible;
+            width: 10%;
+            height: 10%;
         }
         #right.expanded{
+             overflow: hidden;
             width: 15%;
             height: 80%;
         }
@@ -490,6 +504,7 @@
                         </div>
                     </div>
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양계의 구성<span class="toggle-button">∨</span>
+                       
                         <div class="sub-content">
                             <p>
                                 태양계는 나선 은하인 우리 은하의 나선의 팔 부분에 위치하고 있고, 태양을 중심으로 돌고 있는 
@@ -515,6 +530,11 @@
         
             <!-- 다른 행성들도 같은 구조로 반복 -->
             <div class="nav-item" onclick="toggleItem(event, this)">1. 태양<span class="toggle-button">∨</span>
+                 <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/sun.jpg">
+                    <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/sun.jpg" alt="태양 구조">
+                    
+                 </a>
+                 사진 출처 : 두산백과
                 <div class="sub-items">
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
                         <div class="sub-content">
@@ -532,6 +552,11 @@
             </div>
     
             <div class="nav-item" onclick="toggleItem(event, this)">2. 수성<span class="toggle-button">∨</span>
+                 <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_0.jpg">
+                    <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_0.jpg" alt="수성 구조">
+                   
+                 </a>
+                  사진 출처 : 두산백과
                 <div class="sub-items">
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
                         <div class="sub-content">
@@ -549,6 +574,11 @@
             </div>
     
             <div class="nav-item" onclick="toggleItem(event, this)">3. 금성<span class="toggle-button">∨</span>
+                <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_1.jpg">
+                    <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_1.jpg" alt="금성 구조">
+                   
+                </a>
+                 사진 출처 : 두산백과
                 <div class="sub-items">
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
                         <div class="sub-content">
@@ -566,6 +596,11 @@
             </div>
     
             <div class="nav-item" onclick="toggleItem(event, this)">4. 지구<span class="toggle-button">∨</span>
+                <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_2.jpg">
+                    <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_2.jpg" alt="지구 구조">
+                   
+                </a>
+                 사진 출처 : 두산백과
                 <div class="sub-items">
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
                         <div class="sub-content">
@@ -583,6 +618,11 @@
             </div>
     
             <div class="nav-item" onclick="toggleItem(event, this)">5. 화성<span class="toggle-button">∨</span>
+                <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_3.jpg">
+                    <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_3.jpg" alt="화성 구조">
+                   
+                </a>
+                 사진 출처 : 두산백과
                 <div class="sub-items">
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
                         <div class="sub-content">
@@ -600,6 +640,11 @@
             </div>
     
             <div class="nav-item" onclick="toggleItem(event, this)">6. 목성<span class="toggle-button">∨</span>
+                <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_4.jpg">
+                    <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_4.jpg" alt="목성 구조">
+                    
+                </a>
+                사진 출처 : 두산백과
                 <div class="sub-items">
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
                         <div class="sub-content">
@@ -654,6 +699,11 @@
             </div>
     
             <div class="nav-item" onclick="toggleItem(event, this)">7. 토성<span class="toggle-button">∨</span>
+                <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_5.jpg">
+                    <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_5.jpg" alt="토성 구조">
+                   
+                </a>
+                 사진 출처 : 두산백과
                 <div class="sub-items">
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
                         <div class="sub-content">
@@ -671,6 +721,11 @@
             </div>
     
             <div class="nav-item" onclick="toggleItem(event, this)">8. 천왕성<span class="toggle-button">∨</span>
+                <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_6.jpg">
+                    <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_6.jpg" alt="천왕성 구조">
+                    
+                </a>
+                사진 출처 : 두산백과
                 <div class="sub-items">
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
                         <div class="sub-content">
@@ -688,6 +743,11 @@
             </div>
     
             <div class="nav-item" onclick="toggleItem(event, this)">9. 해왕성<span class="toggle-button">∨</span>
+                <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_7.jpg">
+                    <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_7.jpg" alt="해왕성 구조">
+                    
+                </a>
+                사진 출처 : 두산백과
                 <div class="sub-items">
                     <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
                         <div class="sub-content">
