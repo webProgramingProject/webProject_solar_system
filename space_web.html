@@ -286,6 +286,15 @@
             top: 15%;
             right: 0%;
             z-index: 10;
+            transition: width 0.3s ease;
+        }
+        #right.collapsed{
+            width: 3%;
+            height: 80%;
+        }
+        #right.expanded{
+            width: 15%;
+            height: 80%;
         }
         .menu-items {
             overflow-y: scroll;
@@ -427,7 +436,6 @@
             display: flex;
             align-items: center; /* 수직 정렬 */
             justify-content: center; /* 수평 정렬 */
-           
 
         }
        
@@ -698,7 +706,7 @@
         </div>
     </div>
     </div>
-    <div id = "right">  
+    <div id = "right" class = "collapsed">  
         <button class = "toggle-btn" onclick="toggleMenu()">=</button>
         <div class = "menu-items" id = "menu">
         <button class = "menu-item" onclick="toggle_right_up(); open_nav_item(0); change_planet_selection(0); resize()">0. 태양계</button>
@@ -789,5 +797,19 @@
     }
     }
 
+    function toggleMenu() {
+    const menu = document.getElementById('menu');
+    const right = document.getElementById('right');
+    
+    menu.classList.toggle('active');
 
+    // toggle width of right
+    if (menu.classList.contains('active')) {
+        right.classList.remove('collapsed');
+        right.classList.add('expanded');
+    } else {
+        right.classList.remove('expanded');
+        right.classList.add('collapsed');
+    }
+}
 </script>
