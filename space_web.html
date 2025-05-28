@@ -456,11 +456,36 @@
     </style>
 </head>
 <body>
+
+    <script>
+        function checkAnswer(category, correct) {
+            const radios = document.getElementsByName(category);
+            let selected = null;
+            for (let radio of radios) {
+                if (radio.checked) {
+                    selected = radio.value;
+                    break;
+                }
+            }
+            if (!selected) {
+                alert('정답을 선택해주세요.');
+                return;
+            }
+            if (selected === correct) {
+                alert('정답입니다!');
+            } else {
+                alert('정답은 ' + correct + '번 입니다!');
+            }
+        }
+    </script>
+
     <canvas id = "c"  ></canvas>
-    <script src = "renderMain.js"></script>      
-    <div id = "banner">
-        <h1 id = "site_title" class = "font_nanum" >우주의 창, 태양계 이야기</h1>
+     <div id = "banner">
+        <h1 id = "site_title" class = "font_nanum" >우주의 창, 태양계 이야기   fps : <span id = "fps"></span> </h1>
+        
     </div>
+  
+     <script src = "renderMain.js"></script>    
 <div id = "contents" >
     
     <div id = "left">
@@ -469,10 +494,10 @@
         </button>
         <div id = "left_content"> 
         <div class="nav font_nanum">
-            <div class="nav-item" onclick="toggleItem(event, this)">0. 태양계<span class="toggle-button">∨</span>
+            <div class="nav-item" >0. 태양계<span  class="toggle-button"  onclick="toggleItem(event, this.parentElement)">∨</span>
                 <iframe width="50%" src="https://www.youtube.com/embed/XLY0srZajTo" title="태양계의 탄생   태양계는 어떻게 생겨난 것일까？" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                <div class="sub-items">
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                <div class="sub-items"> 
+                    <div class="sub-item" >- 태양의 탄생 (기원)<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
                             <!-- 태양계 소개 본문 -->
                             우리 태양계는 태양, 8개의 행성, 공식적으로 명명된 5개의 왜행성, 수백 개의 위성, 그리고 수천 개의 소행성과 혜성으로 구성되어 있습니다. 
@@ -481,7 +506,7 @@
                             우리 태양계는 은하 중심을 약 82만 8천 km/h의 속도로 공전합니다. 은하 중심을 한 바퀴 도는 데 약 2억 3천만 년이 걸립니다.
                         </div>
                     </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양계의 탄생과 진화<span class="toggle-button">∨</span>
+                    <div class="sub-item" >- 태양계의 탄생과 진화<span  class="toggle-button" onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
                             <!-- 태양계의 탄생 본문 -->
                             <p>
@@ -504,7 +529,7 @@
                             </p>
                         </div>
                     </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양계의 구성<span class="toggle-button">∨</span>
+                    <div class="sub-item">- 태양계의 구성<span  class="toggle-button" onclick="toggleSubItem(event, this.parentElement)">∨</span>
                        
                         <div class="sub-content">
                             <p>
@@ -530,236 +555,1700 @@
             </div>
         
             <!-- 다른 행성들도 같은 구조로 반복 -->
-            <div class="nav-item" onclick="toggleItem(event, this)">1. 태양<span class="toggle-button">∨</span>
+            <div class="nav-item" >1. 태양<span  class="toggle-button"  onclick="toggleItem(event, this.parentElement)">∨</span>
                  <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/sun.jpg">
                     <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/sun.jpg" alt="태양 구조">
                     
                  </a>
                  사진 출처 : 두산백과
                 <div class="sub-items">
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                    <div class="sub-item"  >- 태양의 탄생 (기원)<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
                             <!-- 태양 소개 본문 -->
-                            태양은 우리 태양계의 중심에 있는 별입니다...
+                            • 태양은 약 46억 년 전, 거대한 성운(별먼지 구름)이 중력에 의해 수축하면서 탄생했습니다.
+                            • 이 과정에서 중심부 온도가 수백만 도까지 올라가며 수소 핵융합 반응이 시작되었고,
+                            • 그 결과 태양이 스스로 빛을 내는 별(항성)으로 탄생하게 되었습니다.
+                            <p>
+                                * 관련 교육 과정 *
+                                중학교 1학년 - 중과01-07
+                            </p>
                         </div>
                     </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                    <div class="sub-item"  >- 태양의 구성<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
                             <!-- 태양의 탄생 본문 -->
-                            태양은 성운 수축으로 탄생했습니다...
+                            태양은 대부분 **수소(약 74%)와 헬륨(약 24%)**로 이루어진 뜨거운 기체 상태의 천체입니다.
+                            아래와 같은 구조적 층으로 구성되어 있습니다:
+                            &nbsp;•	핵(core): 중심부, 핵융합 반응이 일어나 에너지를 생성(태양의 에너지는 주로 핵융합으로 생성)
+                            &nbsp;•	복사층(radiative zone): 에너지가 천천히 바깥으로 이동하는 영역
+                            &nbsp;•	대류층(convective zone): 뜨거운 기체가 대류하며 열을 운반
+                            &nbsp;•	광구(photosphere): 우리가 보는 태양의 표면 (가장 밝습니다.)
+                            &nbsp;•	채층(chromosphere), 코로나(corona): 태양의 대기, 폭발·흑점·플레어 등이 발생
+                            <p>
+                                * 관련 교육 과정 *
+                                초등학교에서는 내부 구조보다는 광구(표면) 중심 공부하게 되고,
+                                심화적인 내용은 중학교 1학년 '중과01-06' 단원과 연관되어 있어요.
+                            </p>
                         </div>
                     </div>
+                    <div class="sub-item"  >- 태양의 진화<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            태양도 언젠가는 수명을 다합니다.
+                            &nbsp;•	현재 태양은 수소를 태워 헬륨으로 바꾸는 주계열성(main sequence) 상태입니다.
+                            &nbsp;•	약 50억 년 후, 태양은 **적색거성(red giant)**이 되며 부풀어 오르고, 이후 **백색왜성(white dwarf)**으로 남게 됩니다.
+                            <p>
+                                * 관련 교육 과정 *
+                                초등학교 교육과정에 포함되어 있는 내용은 아니지만,
+                                중학교 1학년'중과01-06' 단원에서 태양과 같은 별의 생애에 대해서 배워요.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 태양의 역할 (지구와 생명에 끼치는 영향)<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            태양은 지구에 빛과 열을 제공하는 굉장히 중요하고 유일한 에너지원입니다.
+                            &nbsp;•	이 덕분에 날씨, 계절, 기후가 형성되고
+                            &nbsp;•	식물은 광합성, 동물은 활동 에너지를 얻을 수 있습니다.
+                            &nbsp;•	지구 생명체의 생존은 전적으로 태양 에너지에 의존합니다.
+                            <p>
+                                * 관련 교육 과정 *
+                                초등학교 3~4학년군 생명 영역, 4과04-03 낮과 밤을 이해하는 데 도움되는 내용이에요.
+                                중학교 1학년 '중과01-05' 단원에서 우리 지구와 관련지어 배우고 됩니다.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 태양의 겉보기 운동<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 지구에서 보면 태양은 하루 동안 동쪽에서 떠서 서쪽으로 지는 것처럼 보입니다.
+                            • 하지만 실제로는 지구가 자전(자전: 자신의 축을 중심으로 회전)하고 있기 때문입니다.
+                            • 이러한 태양의 이동처럼 보이는 현상을 겉보기 운동이라 합니다.
+                            <p>
+                                * 관련 교육 과정 *
+                                초등학교 '4과04-01', '4과04-03'과 연관되어 있어요.
+                                중학교 1학년 '중과01-05' 단원에서 자세히 다루게 됩니다.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 태양의 고도 변화와 그림자<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 태양이 하늘에서 높이 떠 있을수록 그림자는 짧고, 낮게 있을수록 그림자는 길게 나타납니다.
+                            <br>
+                            <table border="1">
+                                <thead>
+                                    <tr>
+                                        <th>시간대</th>
+                                        <th>태양 고도</th>
+                                        <th>그림자 길이</th>
+                                        <th>그림자 방향</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>아침</td>
+                                        <td>낮음</td>
+                                        <td>김</td>
+                                        <td>서쪽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>정오</td>
+                                        <td>가장 높음</td>
+                                        <td>가장 짧음</td>
+                                        <td>북쪽 (한국 기준)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>오후</td>
+                                        <td>낮아짐</td>
+                                        <td>다시 김</td>
+                                        <td>동쪽</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                * 관련 교육 과정 *
+                                초등학교 3~4학년 - 4과04-02, 4과04-03
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 태양계에서의 위치<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 태양은 태양계의 중심에 있습니다.
+                            • 8개의 행성(수성, 금성, 지구, 화성, 목성, 토성, 천왕성, 해왕성)이 
+                            &nbsp;태양을 중심으로 타원형 궤도를 따라 공전합니다.
+                            <p>
+                                * 관련 교육 과정 *
+                                초등학교 6학년 - 6과03-01
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 태양은 항성이다<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 태양은 별(항성) 중 하나이며, 우리 가까이에 있는 항성이기 때문에 밝고 크고 뜨겁게 보이는 것입니다.
+                            • 다른 별(항성)들도 태양처럼 스스로 빛을 냅니다.
+                            <p>
+                                * 관련 교육 과정 *
+                                초등학교 6학년 '6과03-01' 단원에서 소개하고 있어요.
+                                중학교 1학년 '중과01-07' 단원에서 자세히 다루게 됩니다.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 태양 요약정리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <table border="1">
+                                <thead>
+                                    <tr>
+                                        <th>카테고리</th>
+                                        <th>핵심 내용 요약</th>
+                                        <th>교육과정 연계 여부</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>태양의 기원</td>
+                                        <td>성운에서 탄생, 핵융합 시작</td>
+                                        <td>중학교 1학년 중과01-06</td>
+                                    </tr>
+                                    <tr>
+                                        <td>태양의 구성</td>
+                                        <td>핵, 복사층, 광구, 코로나 등</td>
+                                        <td>중학교 1학년 중과01-06</td>
+                                    </tr>
+                                    <tr>
+                                        <td>태양의 진화</td>
+                                        <td>주계열성 → 적색거성 → 백색왜성</td>
+                                        <td>중학교 1학년 중과01-06</td>
+                                    </tr>
+                                    <tr>
+                                        <td>생명의 에너지원</td>
+                                        <td>빛과 열 제공 → 생명 유지</td>
+                                        <td>초등 간접 연계 (3~4학년 생명 영역 관련)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>겉보기 운동</td>
+                                        <td>동→서 이동처럼 보이는 이유는 자전</td>
+                                        <td>초등 4학년 4과04-01, 4과04-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>고도와 그림자 변화</td>
+                                        <td>그림자 길이/방향과 시간대 관계</td>
+                                        <td>초등 4학년 4과04-02</td>
+                                    </tr>
+                                    <tr>
+                                        <td>낮과 밤</td>
+                                        <td>자전으로 낮과 밤 생김</td>
+                                        <td>초등 4학년 4과04-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>태양계 중심</td>
+                                        <td>모든 행성이 태양을 중심으로 공전</td>
+                                        <td>초등 6학년 6과03-01</td>
+                                    </tr>
+                                    <tr>
+                                        <td>항성의 성질</td>
+                                        <td>태양도 스스로 빛을 내는 별</td>
+                                        <td>초등 6학년 6과03-01, 중학교 1학년 중과01-07</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 태양 퀴즈<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                    <div class="sub-content">
+                        <h4>태양 퀴즈</h4>
+
+                        <hr>
+
+                        <p><strong>1. 우리가 매일 보는 태양의 밝은 부분은 어떤 층인가요?</strong></p>
+                        <label><input type="radio" name="sun1" value="1"> ① 핵(core)</label><br>
+                        <label><input type="radio" name="sun1" value="2"> ② 코로나(corona)</label><br>
+                        <label><input type="radio" name="sun1" value="3"> ③ 광구(photosphere)</label><br>
+                        <label><input type="radio" name="sun1" value="4"> ④ 대류층(convective zone)</label><br>
+                        <button onclick="checkAnswer('sun1', '3')">제출</button>
+                        <p class="reference">(교육과정 연계: 초등 – 직접 명시 없음 (4과04-03과 통합 가능), 중등 – 중1-중과01-06 / 참고 카테고리: 태양 – 태양의 구성)</p>
+
+
+                        <hr>
+
+                        <p><strong>2. 태양의 에너지는 주로 어떤 과정을 통해 만들어지나요?</strong></p>
+                        <label><input type="radio" name="sun2" value="1"> ① 광합성</label><br>
+                        <label><input type="radio" name="sun2" value="2"> ② 증발</label><br>
+                        <label><input type="radio" name="sun2" value="3"> ③ 핵융합</label><br>
+                        <label><input type="radio" name="sun2" value="4"> ④ 자기장 작용</label><br>
+                        <button onclick="checkAnswer('sun2', '3')">제출</button>
+                        <p class="reference">(교육과정 연계: 초등 – 미포함, 중등 – 중1-중과01-06 / 참고 카테고리: 태양 – 태양의 구성)</p>
+
+
+                        <hr>
+
+                        <p><strong>3. 지구의 생명체가 태양에 의존하는 주된 이유는?</strong></p>
+                        <label><input type="radio" name="sun3" value="1"> ① 달보다 가깝기 때문에</label><br>
+                        <label><input type="radio" name="sun3" value="2"> ② 지구가 태양을 공전하기 때문에</label><br>
+                        <label><input type="radio" name="sun3" value="3"> ③ 태양이 지구에 빛과 열을 주기 때문</label><br>
+                        <label><input type="radio" name="sun3" value="4"> ④ 태양이 매우 빠르게 자전하기 때문</label><br>
+                        <button onclick="checkAnswer('sun3', '3')">제출</button>
+                        <p class="reference">(교육과정 연계: 초등 4과04-03 생명 영역 통합 / 중등 – 중1-중과01-05 / 참고 카테고리: 태양 – 태양의 역할)</p>
+
+
+                    </div>
+                </div>
                 </div>
             </div>
     
-            <div class="nav-item" onclick="toggleItem(event, this)">2. 수성<span class="toggle-button">∨</span>
+            <div class="nav-item" >2. 수성<span  class="toggle-button"  onclick="toggleItem(event, this.parentElement)">∨</span>
                  <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_0.jpg">
                     <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_0.jpg" alt="수성 구조">
                    
                  </a>
                   사진 출처 : 두산백과
+                
                 <div class="sub-items">
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                    <div class="sub-item"  >- 수성의 기본 정보<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양 소개 본문 -->
-                            태양은 우리 태양계의 중심에 있는 별입니다...
+                            • 수성은 태양에 가장 가까운 행성으로, 태양계의 첫 번째 행성입니다.<br>
+                            • 지구보다 작고, 크기는 달보다 조금 더 큽니다.<br>
+                            • 대기가 거의 없고, 표면은 달처럼 <strong>크레이터(충돌 자국)</strong>가 많은 바위 행성입니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중등 1학년 - 중과01-03
+                            </p>
                         </div>
                     </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                    <div class="sub-item"  >- 수성의 공전과 자전<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양의 탄생 본문 -->
-                            태양은 성운 수축으로 탄생했습니다...
+                            • 수성은 태양을 88일 만에 1바퀴 공전합니다.<br>
+                            • 태양과 가장 가까워 중력이 세기 때문에 태양계 행성 중 공전 주기가 가장 짧습니다.<br>
+                            • 자전은 약 59일에 한 번 일어나며, 하루가 매우 깁니다.<br>
+                            • 대기가 거의 없어 낮에는 매우 뜨겁고 밤에는 매우 춥습니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 6과03-01, 6과03-02<br>
+                                중등 1학년 - 중과01-03
+                            </p>
+                        </div>
+                    </div>  
+                    <div class="sub-item"  >- 수성의 표면과 특징<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 수성은 대기가 거의 없어 운석이 그대로 부딪혀 달과 유사하게 많은 크레이터가 생겨났습니다.<br>
+                            • 달과 비슷한 회색빛 바위 표면을 가지고 있으며, 화산 흔적과 극지방의 얼음도 탐사되었습니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 수성의 대기<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 수성은 중력이 매우 약해 대기가 거의 존재하지 않아 낮과 밤의 온도 차가 극심합니다.<br>
+                            • 태양빛과 운석에 직접 노출되며, 낮과 밤의 온도 차가 600도 이상 날 수 있습니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 수성의 위치와 궤도<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 수성은 태양에서 가장 가까운 내행성으로, 금성과 함께 지구보다 안쪽 궤도를 돕니다.<br>
+                            • 태양 가까이에 있어 지구에서는 일출·일몰 무렵에만 관측됩니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 6과03-01, 6과03-02<br>
+                                중학교 1학년 중과01-03
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 수성의 위성과 고리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 수성은 위성(달)이나 고리가 전혀 없습니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 6과03-02<br>
+                                중학교 2학년 중과02-04
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 수성 요약정리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <table border="1">
+                                <thead>
+                                    <tr>
+                                        <th>카테고리</th>
+                                        <th>핵심 내용 요약</th>
+                                        <th>교육과정 연계 여부</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>기본 정보</td>
+                                        <td>태양에서 가장 가까운 행성, 작고 바위로 이루어짐</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>공전·자전</td>
+                                        <td>공전 88일, 자전 59일 → 낮밤 온도차 큼</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>표면 특징</td>
+                                        <td>크레이터 많고 달과 비슷, 얼음 가능성</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>대기 유무</td>
+                                        <td>거의 없음, 온도 변화 극심</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>궤도 및 위치</td>
+                                        <td>내행성, 금성과 함께 태양에 가까움</td>
+                                        <td>초등 6학년 6과03-01, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>위성/고리</td>
+                                        <td>없음</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>탐사 사례</td>
+                                        <td>NASA 메신저, BepiColombo</td>
+                                        <td>직접 연계 없음 (흥미 콘텐츠)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 수성 퀴즈<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <h4>수성 퀴즈</h4>
+
+                            <hr>
+
+                            <p><strong>1. 수성이 다른 행성보다 공전 주기가 짧은 이유는 무엇인가요?</strong></p>
+                            <label><input type="radio" name="mercury1" value="1"> ① 질량이 작기 때문에</label><br>
+                            <label><input type="radio" name="mercury1" value="2"> ② 위성이 없기 때문에</label><br>
+                            <label><input type="radio" name="mercury1" value="3"> ③ 태양과 가까워 중력이 세기 때문에</label><br>
+                            <label><input type="radio" name="mercury1" value="4"> ④ 대기가 없기 때문에</label><br>
+                            <button onclick="checkAnswer('mercury1', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초6-6과03-01, 중1-중과01-03 / 참고 카테고리: 수성 – 수성의 공전과 자전)</p>
+
+                            <hr>
+
+                            <p><strong>2. 수성의 낮과 밤의 온도 차가 극심한 이유는 무엇인가요?</strong></p>
+                            <label><input type="radio" name="mercury2" value="1"> ① 태양빛을 많이 받아서</label><br>
+                            <label><input type="radio" name="mercury2" value="2"> ② 표면에 얼음이 많아서</label><br>
+                            <label><input type="radio" name="mercury2" value="3"> ③ 대기가 거의 없어서</label><br>
+                            <label><input type="radio" name="mercury2" value="4"> ④ 자전 속도가 너무 빨라서</label><br>
+                            <button onclick="checkAnswer('mercury2', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초6-6과03-02, 중2-중과02-04 / 참고 카테고리: 수성 – 수성의 대기)</p>
+
+                            <hr>
+
+                            <p><strong>3. 다음 중 수성과 달의 공통점으로 알맞은 것은?</strong></p>
+                            <label><input type="radio" name="mercury3" value="1"> ① 고리가 있다</label><br>
+                            <label><input type="radio" name="mercury3" value="2"> ② 대기가 두껍다</label><br>
+                            <label><input type="radio" name="mercury3" value="3"> ③ 표면에 충돌구(크레이터)가 많다</label><br>
+                            <label><input type="radio" name="mercury3" value="4"> ④ 자전 속도가 빠르다</label><br>
+                            <button onclick="checkAnswer('mercury3', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초6-6과03-02, 중2-중과02-04 / 참고 카테고리: 수성 – 수성의 표면과 특징)</p>
+                        
                         </div>
                     </div>
                 </div>
             </div>
-    
-            <div class="nav-item" onclick="toggleItem(event, this)">3. 금성<span class="toggle-button">∨</span>
+
+            <div class="nav-item" >3. 금성<span  class="toggle-button"  onclick="toggleItem(event, this.parentElement)">∨</span>
                 <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_1.jpg">
                     <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_1.jpg" alt="금성 구조">
                    
                 </a>
                  사진 출처 : 두산백과
                 <div class="sub-items">
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                    <!-- 기본 정보 -->
+                    <div class="sub-item"  >- 금성의 기본 정보<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양 소개 본문 -->
-                            태양은 우리 태양계의 중심에 있는 별입니다...
+                            • 태양에서 두 번째로 가까운 행성입니다.<br>
+                            • 지구와 크기, 질량, 밀도가 유사하여 '지구의 쌍둥이'라고 부르기도 해요.<br>
+                            • 지구형(암석형) 행성에 속하며, 단단한 표면을 갖고 있습니다.<br>
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 1학년 - 중과01-03
+                            </p>
                         </div>
                     </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+                    <!-- 공전과 자전 -->
+                    <div class="sub-item"  >- 금성의 공전과 자전<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양의 탄생 본문 -->
-                            태양은 성운 수축으로 탄생했습니다...
+                            • 공전 주기: 약 225일, 태양을 한 바퀴 도는데 225일이 걸립니다.<br>
+                            • 자전 주기: 약 243일 느리게 돌며, 다른 행성과 달리 반대 방향(역자전)으로 자전합니다.<br>
+                            &nbsp;-> 이(역자전) 때문에 태양이 서쪽에서 떠서 동쪽으로 지는 것처럼 보입니다.
+                            • 금성의 1일은 1년보다 길어서 하루가 1년보다 길다는 특징이 있어요.<br>
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 1학년 - 중과01-03
+                            </p>
+                        </div>
+                    </div>
+                    <!-- 표면 -->
+                    <div class="sub-item"  >- 금성의 표면과 특징<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 표면은 화산 지형, 용암 평원 등으로 덮여 있습니다.<br>
+                            • 대기층이 두꺼워 지표면을 직접 볼 수 없고, 레이더 관측으로 탐사합니다.<br>
+                            • 대기가 운석의 충돌을 대부분 막아주기 때문에, 운석 구덩기가 거의 없습니다.<br>
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
+                        </div>
+                    </div>
+                    <!-- 대기 -->
+                    <div class="sub-item"  >- 금성의 대기<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 대기의 96% 이상이 이산화탄소(CO₂)로 구성되어 있으며, 두꺼운 대기와 짙은 구름으로 덮여 있어요.<br>
+                            • 매우 강한 온실효과로 인해 표면 온도는 약 470℃로 태양계에서 가장 뜨거운 행성이랍니다.<br>
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
+                        </div>
+                    </div>
+                    <!-- 위성과 고리 -->
+                    <div class="sub-item"  >- 금성의 위성과 고리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 금성은 위성(지구의 달과 같은 천체)이나 고리가 전혀 없습니다.<br>
+                            • 위성과 고리가 전혀 없다는 것은 수성과 금성만의 특징입니다.<br>
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 1학년 - 중과01-03
+                            </p>
+                        </div>
+                    </div>
+                    <!-- 위치와 궤도 -->
+                    <div class="sub-item"  >- 금성의 위치와 궤도<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 금성은 태양과 지구 사이에 있는 내행성입니다.<br>
+                            • 태양에 가까이 있어 지구에서 볼 수 있는 위치가 매우 제한적입니다.<br>
+                            • 주로 새벽 하늘(샛별), 저녁 하늘(개밥바라기별)에서 관측됩니다.<br>
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01<br>
+                                중학교 1학년 - 중과01-03
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 금성 요약정리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <table border="1">
+                                <thead>
+                                    <tr>
+                                        <th>카테고리</th>
+                                        <th>핵심 내용 요약</th>
+                                        <th>교육과정 연계 여부</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>기본 정보</td>
+                                        <td>지구와 크기 유사, 지구형 행성</td>
+                                        <td>초등 6학년 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>공전·자전</td>
+                                        <td>공전 225일, 자전 243일(역자전)</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>표면 특징</td>
+                                        <td>용암 평원, 화산 지형, 짙은 구름</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>대기 유무</td>
+                                        <td>이산화탄소 중심, 온실효과 -> 최고 온도</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>궤도 및 위치</td>
+                                        <td>내행성, 새벽·저녁 무렵 관측</td>
+                                        <td>초등 6학년 6과03-01, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>위성/고리</td>
+                                        <td>없음</td>
+                                        <td>초등 6학년 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>탐사 사례</td>
+                                        <td>매글런, 베네라 탐사선</td>
+                                        <td>직접 연계 없음 (흥미 콘텐츠)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 금성 퀴즈<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <h4>금성 퀴즈</h4>
+
+                            <hr>
+
+                            <p><strong>1. 금성에서 태양이 서쪽에서 떠서 동쪽으로 지는 이유는 무엇인가요?</strong></p>
+                            <label><input type="radio" name="venus1" value="1"> ① 공전 궤도가 타원이기 때문에</label><br>
+                            <label><input type="radio" name="venus1" value="2"> ② 대기 성분이 이산화탄소이기 때문에</label><br>
+                            <label><input type="radio" name="venus1" value="3"> ③ 자전 방향이 다른 행성과 반대이기 때문에</label><br>
+                            <label><input type="radio" name="venus1" value="4"> ④ 고리가 없기 때문에</label><br>
+                            <button onclick="checkAnswer('venus1', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초6-6과03-02, 중1-중과01-03 / 참고 카테고리: 금성 – 금성의 공전과 자전)</p>
+                            
+                            <hr>
+
+                            <p><strong>2. 금성이 태양계에서 가장 뜨거운 행성인 주된 이유는 무엇인가요?</strong></p>
+                            <label><input type="radio" name="venus2" value="1"> ① 태양과 가장 가까운 행성이기 때문에</label><br>
+                            <label><input type="radio" name="venus2" value="2"> ② 지구보다 훨씬 크기 때문에</label><br>
+                            <label><input type="radio" name="venus2" value="3"> ③ 두꺼운 대기와 이산화탄소로 인한 온실효과 때문</label><br>
+                            <label><input type="radio" name="venus2" value="4"> ④ 위성이 없기 때문에</label><br>
+                            <button onclick="checkAnswer('venus2', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초6-6과03-02, 중2-중과02-04 / 참고 카테고리: 금성 – 금성의 대기)</p>
+
+                            <hr>
+
+                            <p><strong>3. 금성과 지구의 공통점으로 알맞은 것은 무엇인가요?</strong></p>
+                            <label><input type="radio" name="venus3" value="1"> ① 고리가 있다</label><br>
+                            <label><input type="radio" name="venus3" value="2"> ② 모두 기체형 행성이다</label><br>
+                            <label><input type="radio" name="venus3" value="3"> ③ 크기, 질량, 밀도가 비슷하다</label><br>
+                            <label><input type="radio" name="venus3" value="4"> ④ 위성이 많다</label><br>
+                            <button onclick="checkAnswer('venus3', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초6-6과03-02, 중2-중과02-04 / 참고 카테고리: 금성 – 금성의 기본 정보)</p>
+                        
                         </div>
                     </div>
                 </div>
             </div>
     
-            <div class="nav-item" onclick="toggleItem(event, this)">4. 지구<span class="toggle-button">∨</span>
+            <div class="nav-item" >4. 지구<span  class="toggle-button"  onclick="toggleItem(event, this.parentElement)">∨</span>
                 <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_2.jpg">
                     <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_2.jpg" alt="지구 구조">
                    
                 </a>
                  사진 출처 : 두산백과
                 <div class="sub-items">
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                    <div class="sub-item"  >- 지구의 기본 정보<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양 소개 본문 -->
-                            태양은 우리 태양계의 중심에 있는 별입니다...
+                            • 태양계에서 세 번째 행성이며, 생명체가 존재하는 유일한 행성입니다.<br>
+                            • 지구형(암석형) 행성으로, 단단한 표면과 바다, 대기를 가지고 있습니다.<br>
+                            • 표면의 약 <strong>70%</strong>가 물(바다)로 덮여 있습니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01, 6과03-02
+                            </p>
                         </div>
                     </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+
+                    <div class="sub-item"  >- 지구의 공전과 자전<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양의 탄생 본문 -->
-                            태양은 성운 수축으로 탄생했습니다...
+                            • 공전 주기: 약 365.25일 (1년)<br>
+                            • 자전 주기: 약 24시간 – 자전으로 낮과 밤이 생김<br>
+                            • 자전 방향은 서 → 동, 태양이 동쪽에서 떠서 서쪽으로 집니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 4학년 - 4과04-03<br>
+                                초등학교 6학년 - 6과03-01<br>
+                                중학교 1학년 - 중과01-05
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 지구의 표면과 특징<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 암석 표면, 산과 바다, 대륙과 해양이 있습니다.<br>
+                            • 화산, 강, 사막, 빙하 등 다양한 지형이 존재하는 아름다운 행성입니다.<br>
+                            • 내부는 지각–맨틀–핵으로 구성되어 있어요.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 지구의 대기<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 지구의 대기는 질소 78%, 산소 21%, 기타 여러 기체들을 포함하고 있습니다.<br>
+                            • 지구의 대기는 생명을 유지하고, 날씨와 기후를 조절하는 역할을 하고 있어요.<br>
+                            • 오존층은 자외선으로부터 생명체를 보호해줍니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 지구의 위성과 고리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 지구에는 하나의 위성 달이 있고, 고리는 없습니다.<br>
+                            • 달은 조수간만, 모양 변화, 일식·월식 등 지구에 다양한 영향을 미칩니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 4학년 - 4과04-01<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 1학년 - 중과01-06
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 지구의 위치와 궤도<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 지구는 태양에서 세 번째, 내행성과 외행성 사이에 존재합니다.<br>
+                            • 타원형 궤도를 따라 태양을 중심으로 공전합니다.<br>
+                            • 공전과 자전축 기울기로 계절 변화가 발생합니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01<br>
+                                중학교 1학년 - 중과01-05
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 지구 탐사<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 지구는 인간이 직접 탐사 가능한 유일한 행성입니다.<br>
+                            • 인공위성, 우주정거장을 통해 지속적으로 관측중입니다.<br>
+                            • 기후·환경·재해 예측에 활용되고 있어요.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                직접 명시는 없으나, 기상 및 환경과의 융합 콘텐츠 활용 가능합니다.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 지구 요약정리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <table border="1">
+                                <thead>
+                                    <tr>
+                                        <th>카테고리</th>
+                                        <th>핵심 내용 요약</th>
+                                        <th>교육과정 연계 여부</th>                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>기본 정보</td>
+                                        <td>생명체 존재, 지구형 행성</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>공전·자전</td>
+                                        <td>공전 1년(365일), 자전 1일</td>
+                                        <td>초등 4학년 4과04-03, 6학년 6과06-01, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>표면 특징</td>
+                                        <td>암석으로 된 다양한 지형(육지·바다·산 등)</td>
+                                        <td>초등 6학년 6과03-02, 중등 1학년 중과01-01, 2학년 중과02-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>대기 유무</td>
+                                        <td>산소 포함, 생명 유지 가능, 기상 변화와 연관</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-02, 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>궤도 및 위치</td>
+                                        <td>태양에서 세 번째, 타원 궤도</td>
+                                        <td>초등 6학년 6과03-01, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>위성/고리</td>
+                                        <td>달 1개, 고리 없음</td>
+                                        <td>초등 4학년 4과04-01, 6학년 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>탐사 사례</td>
+                                        <td>인공위성, 기상·지구관측 위성 등</td>
+                                        <td>직접 연계 없음 (흥미 콘텐츠)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 지구 퀴즈<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <h4>지구 퀴즈</h4>
+
+                            <hr>
+
+                            <p><strong>1. 지구에서 낮과 밤이 생기는 주된 원인은 무엇인가요?</strong></p>
+                            <label><input type="radio" name="earth1" value="1"> ① 공전 속도가 빠르기 때문에</label><br>
+                            <label><input type="radio" name="earth1" value="2"> ② 지구가 자전하기 때문에</label><br>
+                            <label><input type="radio" name="earth1" value="3"> ③ 대기권이 있어서</label><br>
+                            <label><input type="radio" name="earth1" value="4"> ④ 지구가 둥글기 때문에</label><br>
+                            <button onclick="checkAnswer('earth1', '2')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 4과04-03, 6과03-01 / 중등 중1-중과01-05 / 참고 카테고리: 지구 – 지구의 공전과 자전)</p>
+                            
+                            <hr>
+
+                            <p><strong>2. 지구의 표면에 바다가 많은 주된 이유는 무엇인가요?</strong></p>
+                            <label><input type="radio" name="earth2" value="1"> ① 대기가 없기 때문에</label><br>
+                            <label><input type="radio" name="earth2" value="2"> ② 기체로 이루어져 있기 때문에</label><br>
+                            <label><input type="radio" name="earth2" value="3"> ③ 액체 상태의 물이 존재하기 때문에</label><br>
+                            <label><input type="radio" name="earth2" value="4"> ④ 태양과 가장 가까이 있기 때문에</label><br>
+                            <button onclick="checkAnswer('earth2', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-02 / 중등 중2-중과02-04 / 참고 카테고리: 지구 – 지구의 기본 정보)</p>
+
+                            <hr>
+
+                            <p><strong>3. 다음 중 지구의 유일한 위성으로 올바른 것은 무엇인가요?</strong></p>
+                            <label><input type="radio" name="earth3" value="1"> ① 타이탄</label><br>
+                            <label><input type="radio" name="earth3" value="2"> ② 트리톤</label><br>
+                            <label><input type="radio" name="earth3" value="3"> ③ 달</label><br>
+                            <label><input type="radio" name="earth3" value="4"> ④ 이오</label><br>
+                            <button onclick="checkAnswer('earth3', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 4과04-01, 6과03-02 / 중등 중1-중과01-06 / 참고 카테고리: 지구 – 지구의 위성과 고리)</p>
+
                         </div>
                     </div>
                 </div>
             </div>
     
-            <div class="nav-item" onclick="toggleItem(event, this)">5. 화성<span class="toggle-button">∨</span>
+            <div class="nav-item" >5. 화성<span  class="toggle-button"  onclick="toggleItem(event, this.parentElement)">∨</span>
                 <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_3.jpg">
                     <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_3.jpg" alt="화성 구조">
                    
                 </a>
                  사진 출처 : 두산백과
                 <div class="sub-items">
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                    <div class="sub-item"  >- 화성의 기본 정보<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양 소개 본문 -->
-                            태양은 우리 태양계의 중심에 있는 별입니다...
+                            • 태양에서 네 번째에 위치한 행성으로, 지구형(암석형) 행성입니다.<br>
+                            • 표면이 붉은 모래와 먼지가 많아서 붉은색을 띄기 때문에 “붉은 행성”이라고 불립니다.<br>
+                            • 크기와 질량은 지구보다 작지만, 지형적 특징이 뚜렷합니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 1학년 - 중과011-03
+                            </p>
                         </div>
                     </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+
+                    <div class="sub-item"  >- 화성의 공전과 자전<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양의 탄생 본문 -->
-                            태양은 성운 수축으로 탄생했습니다...
+                            • 공전 주기: 약 687일 – 지구보다 1년이 훨씬 길어요.<br>
+                            • 자전 주기: 약 24.6시간 – 거의 지구와 비슷합니다.<br>
+                            • 지구와 유사하게 계절 변화도 존재합니다.(지구와 유사하게 자전축이 기울어져 있죠.)
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01, 6과03-02<br>
+                                중학교 1학년 - 중과01-03
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 화성의 표면과 특징<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 표면에는 산, 협곡, 충돌구, 화산이 있습니다.<br>
+                            • 올림푸스 몬스는 태양계에서 가장 큰 화산이죠.<br>
+                            • 대형 협곡인 마리네리스 협곡이 존재합니다.<br>
+                            • 극지방에는 얼음이 존재하며, 과거에는 물이 흐른 흔적도 발견되었어요.<br>
+                            • 운석 충돌로 생긴 크레이터와 얼음 화성에서 실제로 발견되었습니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년년 - 중과02-04
+                                융합활동: 생명 가능성, 물의 존재 등 과학탐구 주제로 확장 가능
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 화성의 대기<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 매우 희박하며, 이산화탄소가 대부분입니다.<br>
+                            • 대기 밀도가 낮아 온도 차가 심하고 물의 존재가 어렵습니다.<br>
+                            • 구름, 먼지폭풍도 존재하고, 기압이 매우 약합니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 화성의 위성과 고리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 화성에는 두 개의 위성이 있어요 -> 포보스(Phobos), 데이모스(Deimos)<br>
+                            • 고리는 존재하지 않습니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 화성의 위치와 궤도<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 지구 다음, 목성 이전에 위치해 있습니다.<br>
+                            • 지구보다 멀리 태양을 공전하는 외행성이죠.<br>
+                            • 궤도는 타원이지만 비교적 원형에 가깝습니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01, 6과03-02<br>
+                                중학교 1학년 - 중과01-03
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 화성 탐사<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 화성은 가장 많이 탐사된 행성 중 하나입니다.<br>
+                            • 대표적인 탐사선: NASA의 퍼서비어런스, 큐리오시티, 오퍼튜니티, 스피릿<br>
+                            • 화성 표면에 직접 탐사 로봇이 착륙하여 토양, 공기, 물, 생명 가능성 등을 연구 중이에요.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                명시는 없지만, 과학 호기심을 유발하는 탐사 사례로 매우 유용합니다.<br>
+                                융합 활동: 환경, 생명, 로봇, 탐사 미션 프로젝트형 학습 가능
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 화성 요약정리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <table border="1">
+                                <thead>
+                                    <tr>
+                                        <th>카테고리</th>
+                                        <th>핵심 내용 요약</th>
+                                        <th>교육과정 연계 여부</th>                                       
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>기본 정보</td>
+                                        <td>지구형 행성, 붉은 색 표면 (산화철 풍부)</td>
+                                        <td>초등 6학년 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>공전·자전</td>
+                                        <td>공전 687일, 자전 24.6시간 -> 지구와 유사</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>표면 특징</td>
+                                        <td>올림푸스 화산, 거대한 협곡, 과거 물 흐름 흔적 존재</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>대기 유무</td>
+                                        <td>희박한 대기, 주성분 이산화탄소, 대기압 매우 낮음</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>궤도 및 위치</td>
+                                        <td>외행성, 태양에서 네 번째, 비교적 둥근 타원 궤도</td>
+                                        <td>초등 6학년 6과03-01 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>위성/고리</td>
+                                        <td>위성 2개(포보스, 데이모스), 고리 없음</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>탐사 사례</td>
+                                        <td>퍼서비어런스, 큐리오시티, 바이킹, 인사이트 등 다수의 로봇 탐사 수행</td>
+                                        <td>직접 연계 없음 (흥미 콘텐츠)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 화성 퀴즈<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <h4>화성 퀴즈</h4>
+
+                            <hr>
+
+                            <p><strong>1. 화성의 별명이 “붉은 행성”인 이유는 무엇인가요?</strong></p>
+                            <label><input type="radio" name="mars1" value="1"> ① 대기가 주황빛이기 때문에</label><br>
+                            <label><input type="radio" name="mars1" value="2"> ② 표면에 붉은 모래와 먼지가 많기 때문에</label><br>
+                            <label><input type="radio" name="mars1" value="3"> ③ 자전 방향이 반대이기 때문에</label><br>
+                            <label><input type="radio" name="mars1" value="4"> ④ 대기가 없어 태양빛이 직접 닿기 때문에</label><br>
+                            <button onclick="checkAnswer('mars1', '2')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-02 / 중등 중2-중과02-04 / 참고 카테고리: 화성 – 화성의 기본 정보)</p>
+                            
+                            <hr>
+
+                            <p><strong>2. 화성에 계절 변화가 생기는 주된 이유는 무엇인가요?</strong></p>
+                            <label><input type="radio" name="mars2" value="1"> ① 공전 주기가 짧아서</label><br>
+                            <label><input type="radio" name="mars2" value="2"> ② 자전축이 기울어져 있어서</label><br>
+                            <label><input type="radio" name="mars2" value="3"> ③ 위성이 2개이기 때문에</label><br>
+                            <label><input type="radio" name="mars2" value="4"> ④ 대기가 매우 두껍기 때문에</label><br>
+                            <button onclick="checkAnswer('mars2', '2')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-01, 6과03-02 / 중등 중1-중과01-05 / 참고 카테고리: 화성 – 화성의 공전과 자전)</p>
+
+
+                            <hr>
+
+                            <p><strong>3. 다음 중 화성에서 실제로 발견된 특징은 무엇인가요?</strong></p>
+                            <label><input type="radio" name="mars3" value="1"> ① 거대한 바다</label><br>
+                            <label><input type="radio" name="mars3" value="2"> ② 활화산과 번개</label><br>
+                            <label><input type="radio" name="mars3" value="3"> ③ 운석 충돌로 생긴 크레이터와 얼음</label><br>
+                            <label><input type="radio" name="mars3" value="4"> ④ 고리와 기체 표면</label><br>
+                            <button onclick="checkAnswer('mars3', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-02 / 중등 중2-중과02-04 / 참고 카테고리: 화성 – 화성의 표면과 특징)</p>
+
                         </div>
                     </div>
                 </div>
             </div>
     
-            <div class="nav-item" onclick="toggleItem(event, this)">6. 목성<span class="toggle-button">∨</span>
+            <div class="nav-item" >6. 목성<span  class="toggle-button"  onclick="toggleItem(event, this.parentElement)">∨</span>
                 <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_4.jpg">
                     <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_4.jpg" alt="목성 구조">
                     
                 </a>
                 사진 출처 : 두산백과
                 <div class="sub-items">
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                    <div class="sub-item"  >- 목성의 기본 정보<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                                <div class="sub-content">
+                                    • 목성은 태양계에서 다섯 번째 행성이며, 가장 크고 무거운 행성입니다.<br>
+                                    • 지구형 행성과 달리, 주로 기체로 이루어진 목성형(기체형) 행성입니다.<br>
+                                    • 크기는 지구의 약 11배이며, 부피는 1,300배에 달합니다.
+                                    <p>
+                                        * 관련 교육 과정 *<br>
+                                        초등학교 6학년 - 6과03-02, 6과03-01<br>
+                                        중학교 2학년 - 중과02-04
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="sub-item"  >- 목성의 공전과 자전<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                                <div class="sub-content">
+                                    • 공전 주기: 약 12년 – 태양을 한 바퀴 도는 데 매우 오래 걸려요.<br>
+                                    • 자전 주기: 약 10시간 – 질량이 크기 때문에 태양계에서 가장 빠르게 자전합니다.<br>
+                                    • 이로 인해 적도 부분이 부풀고 극이 납작한 형태죠.
+                                    <p>
+                                        * 관련 교육 과정 *<br>
+                                        초등학교 6학년 - 6과03-01, 6과03-02<br>
+                                        중학교 1학년 - 중1-3단원
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="sub-item"  >- 목성의 표면과 특징<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                                <div class="sub-content">
+                                    • 고체 표면이 없고, 두꺼운 대기와 구름층으로 덮여 있어요.<br>
+                                    • 대표적 특징: 대적점(Great Red Spot) – 수백 년 동안 지속된 거대한 폭풍이 존재합니다.<br>
+                                    • 적도 부근에는 빠르게 흐르는 줄무늬 형태의 대기 흐름이 특징입니다.
+                                    <p>
+                                        * 관련 교육 과정 *<br>
+                                        초등학교 6학년 - 6과03-02<br>
+                                        중학교 2학년 - 중과02-04
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="sub-item"  >- 목성의 대기<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                                <div class="sub-content">
+                                    • <strong>수소(약 90%)와 헬륨(약 10%)</strong>으로 구성됩니다.<br>
+                                    • 암모니아, 메테인 등 다양한 기체를 포함하고 있어요.<br>
+                                    • 매우 두꺼운 대기와 강한 자기장, 복잡한 날씨 시스템 존재합니다.
+                                    <p>
+                                        * 관련 교육 과정 *<br>
+                                        초등학교 6학년 - 6과03-02<br>
+                                        중학교 2학년 - 중등02-04
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="sub-item"  >- 목성의 위성과 고리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                                <div class="sub-content">
+                                    • 위성 수 90개 이상, 대표적 위성: 이오(Io), 유로파(Europa), 가니메데(Ganymede), 칼리스토(Callisto)<br>
+                                    • 목성도 얇은 고리를 가지고 있어요. 단, 토성처럼 뚜렷하진 않죠.
+                                    <p>
+                                        * 관련 교육 과정 *<br>
+                                        초등학교 6학년 - 6과03-02<br>
+                                        중학교 2학년 - 중과02-04
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="sub-item"  >- 목성의 위치와 궤도<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                                <div class="sub-content">
+                                    • 태양에서 다섯 번째, 지구보다 훨씬 멀리 있어요.<br>
+                                    • 외행성에 속하며, 공전 속도는 느립니다.<br>
+                                    • 타원형 공전 궤도를 가집니다.
+                                    <p>
+                                        * 관련 교육 과정 *<br>
+                                        초등학교 6학년 - 6과03-01<br>
+                                        중학교 1학년 - 중01-03
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="sub-item"  >- 목성 탐사<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                                <div class="sub-content">
+                                    • 대표적인 탐사선: NASA의 갈릴레오(Galileo), 주노(Juno)<br>
+                                    • 대기 구조, 자기장, 위성 탐사에 큰 기여를 하였습니다.<br>
+                                    • 주노 탐사선은 현재도 목성 궤도에서 활동 중입니다.
+                                    <p>
+                                        * 관련 교육 과정 *<br>
+                                        융합 콘텐츠 적합 (중2-확장)
+                                    </p>
+                                </div>
+                            </div>
+                    <div class="sub-item"  >- 목성 요약정리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            목성은 태양계의 5번째 행성으로, 태양계의 행성 중 가장 부피가 큰 거대한 기체 행성성입니다. 목성은 수소와 헬륨으로 이루어져 있고, 
-                            표면의 대기는 주로 메테인, 암모니아 가스로 이루어져 있죠.
+                            <table border="1">
+                                <thead>
+                                    <tr>
+                                        <th>카테고리</th>
+                                        <th>핵심 내용 요약</th>
+                                        <th>교육과정 연계 여부</th>                                       
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>기본 정보</td>
+                                        <td>태양계에서 가장 큰 행성, 기체형 행성</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>공전·자전</td>
+                                        <td>공전 12년, 자전 10시간(태양계에서 가장 빠름)</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>표면 특징</td>
+                                        <td>고체 없음, 대적점(폭풍), 줄무늬 대기</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>대기 유무</td>
+                                        <td>수소, 헬륨 중심, 복잡한 대기 구조</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>궤도 및 위치</td>
+                                        <td>외행성, 태양에서 다섯 번째</td>
+                                        <td>초등 6학년 6과03-01, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>위성/고리</td>
+                                        <td>위성 다수, 희미한 고리 존재</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>탐사 사례</td>
+                                        <td>갈릴레오, 주노 탐사선</td>
+                                        <td>직접 연계 없음 (흥미 콘텐츠)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 목성의 탄생과 진화<span class="toggle-button">∨</span>
+                    <div class="sub-item"  >- 목성 퀴즈<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <p>
-                                목성은 약 46억 년 전, 태양 주변의 가스와 먼지 구름이 중력으로 응집되어 이루어졌을 것으로 추정돼요. 
-                                이후 목성은 작은 우주 자갈이나 소행성을 흡수하면서 성장하는 미세소행성 합체기에 접어들게 됩니다. 
-                                미세소행성 합체기가 끝나고 목성은 큰 소행성과 충돌하며 성장하는 느린 성장기를 거치면서 현재와 같은 
-                                거대한 규모를 가진 행성이 되는 진화 과정을 거쳤다고 알려져 있습니다.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 목성의 구성<span class="toggle-button">∨</span>
-                        <div class="sub-content">
-                            <p>
-                                목성은 내부에 압력으로 인해 액체화된 가스질 맨틀과, 지름만 28000km에 달하는 거대한 얼음-암석질 핵을 갖고 있어요. 
-                                목성의 강력한 중력과 자기장은 모두 이러한 거대한 핵과 맨틀로 이루어진 질량에서 나오는 것이며, 만약 목성이 가스만으로 이루어졌다면 
-                                이를 붙잡아 둘 구심점 없이 흩어졌을 거라고 추측하고 있어요. 
-                                즉, 현존하는 가스 행성들은 단지 가스가 많은 행성일 뿐이고, 가스가 많다는 것은 그 정도의 가스들을 붙잡는 무거운 핵이 내부에 존재한다는 뜻인거죠.
-                            </p>
-                            <p>
-                                목성의 행성 표면이 정확히 어떤지는 아직 불명이지만, 목성 내부의 엄청난 압력과 열로 인해 수소가 
-                                액체 금속의 형태를 띠는 액체 수소의 바다로 구성되어 있을 거라 추측됩니다. 지구 지름의 2배가 넘는 대기층 때문에 행성 내부에서는 당연히 태양과 우주를 볼 수 없으며, 
-                                칠흑 같은 암흑만이 가득할 거예요. 오직 빠른 자전과 물질 구성의 차이로 생겨난 것으로 추측되는 거대한 수소 구름의 흐름만을 볼 수 있을 것입니다.
-                            </p>
-                            <p>
-                                거기에 초속 수백 미터 이상의 태풍과 남아메리카만한 번개(얇은 번개 구조)가 끊임없이 쳐대고, 무지막지한 압력과 열, 지구의 2.5배나 되는 중력에, 
-                                몇 초만 쐬어도 즉사할 수준의 방사선에 지속적으로 피폭되는 것이 일상인 환경이라는 점 또한 예상할 수 있습니다. 
-                                당연히 지금까지 발견된 그 어떠한 생명체도 생존 불가한 무시무시한 환경이죠. 
-                                방사능 폭풍을 어떻게든 버티고 진입한다 쳐도 목성의 맨틀에 해당되는 수천 도의 뜨거운 액체 수소 바다가 나옵니다. 
-                                목성의 맨틀을 이루고 있는 만큼 이 바다의 깊이는 최소 40,000km로 추정되는데, 내부로 접근하면 할수록 어마어마한 압력까지 더해지고 이로 인해 
-                                지구의 내핵, 태양 표면보다도 더 뜨거워지기 때문에 획기적인 기술력 발전이 없는 한 아쉽게도 목성 내부 탐사는 불가능에 가깝다고 합니다.
-                            </p>
-                            <p>
-                                목성도 토성처럼 고리를 가지고 있다는 놀라운 사실을 알고 계셨나요? 사실은 목성형 행성인 목성, 토성, 천왕성, 해왕성 모두가 고리를 가지고 있습니다. 
-                                그러나 먼지가 대부분이며 그것조차 워낙 가늘고 희미하기 때문에 지상에서 관측해 봤자 토성 고리 같은 선명한 형체를 확인할 수 없을 뿐이죠. 
-                                그래서 오랜 기간 목성은 고리가 없다고 여겼지만 1979년 보이저 1호가 목성으로 근접하여 촬영하면서 고리의 존재를 확인하였다고 해요. 
-                                지금도 목성 고리는 허블 우주 망원경을 동원하지 않으면 관측하기가 굉장히 힘들다고 합니다.
-                                추가적으로 과거에는 고리가 1개 있는 걸로 여겼지만 현재는 추가로 발견하여 무려 총 3개라고 해요. 
-                                사실 고리 자체는 모든 목성형 행성들이 가지고 있지만 토성이 다른 목성형 행성에 비해 유별나게 큰 고리를 가지고 있어서 부각되는 것입니다. 
-                                토성을 제외하고 그나마 큰 고리가 있는 건 천왕성 정도죠. 수십 억 년 뒤면 해왕성의 위성인 트리톤이 해왕성 로슈 한계 안쪽으로 진입해서 
-                                산산조각 날 예정이라 토성 고리와는 비교도 안 될 정도로 큰 고리를 형성할 것이라고 예상하고 있습니다.
-                            </p>
+                            <h4>목성 퀴즈</h4>
+
+                            <hr>
+
+                            <p><strong>1. 목성이 태양계에서 가장 빠르게 자전하는 이유는?</strong></p>
+                            <label><input type="radio" name="jupiter1" value="1"> ① 태양에서 가장 가깝기 때문에</label><br>
+                            <label><input type="radio" name="jupiter1" value="2"> ② 고리가 없기 때문에</label><br>
+                            <label><input type="radio" name="jupiter1" value="3"> ③ 질량이 크기 때문에</label><br>
+                            <label><input type="radio" name="jupiter1" value="4"> ④ 위성이 많기 때문</label><br>
+                            <button onclick="checkAnswer('jupiter1', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-01, 6과03-02 / 중등 중1-중과01-03 / 참고 카테고리: 목성 – 목성의 공전과 자전)</p>
+
+                            <hr>
+
+                            <p><strong>2. 목성의 대적점은 어떤 현상인가요?</strong></p>
+                            <label><input type="radio" name="jupiter2" value="1"> ① 얼음 화산</label><br>
+                            <label><input type="radio" name="jupiter2" value="2"> ② 고리 사이의 구멍</label><br>
+                            <label><input type="radio" name="jupiter2" value="3"> ③ 수백 년간 지속된 거대한 폭풍</label><br>
+                            <label><input type="radio" name="jupiter2" value="4"> ④ 대기의 색깔 변화</label><br>
+                            <button onclick="checkAnswer('jupiter2', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-02 / 중등 중2-중과02-04 / 참고 카테고리: 목성 – 목성의 표면과 특징)</p>
+
+
+                            <hr>
+
+                            <p><strong>3. 다음 중 목성의 대표 위성으로 올바른 것은?</strong></p>
+                            <label><input type="radio" name="jupiter3" value="1"> ① 타이탄</label><br>
+                            <label><input type="radio" name="jupiter3" value="2"> ② 트리톤</label><br>
+                            <label><input type="radio" name="jupiter3" value="3"> ③ 가니메데</label><br>
+                            <label><input type="radio" name="jupiter3" value="4"> ④ 미란다</label><br>
+                            <button onclick="checkAnswer('jupiter3', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-02 / 중등 중2-중과02-04 / 참고 카테고리: 목성 – 목성의 위성과 고리)</p>
+
                         </div>
                     </div>
                 </div>
             </div>
     
-            <div class="nav-item" onclick="toggleItem(event, this)">7. 토성<span class="toggle-button">∨</span>
+            <div class="nav-item" >7. 토성<span  class="toggle-button"  onclick="toggleItem(event, this.parentElement)">∨</span>
                 <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_5.jpg">
                     <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_5.jpg" alt="토성 구조">
                    
                 </a>
                  사진 출처 : 두산백과
                 <div class="sub-items">
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                     <div class="sub-item"  >- 토성의 기본 정보<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양 소개 본문 -->
-                            태양은 우리 태양계의 중심에 있는 별입니다...
+                            • 토성은 태양계에서 여섯 번째 행성이며, 목성 다음으로 두 번째로 큰 행성입니다.<br>
+                            • 주로 수소와 헬륨으로 이루어진 목성형(기체형) 행성이며, 지구보다 밀도가 매우 낮습니다.<br>
+                            • 밀도가 매우 낮아서 물에 뜰 수 있는 유일한 행성으로 알려져 있기도 합니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02, 6과03-01<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
                         </div>
                     </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+
+                    <div class="sub-item"  >- 토성의 공전과 자전<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양의 탄생 본문 -->
-                            태양은 성운 수축으로 탄생했습니다...
+                            • 공전 주기: 약 29.5년 – 태양을 한 바퀴 도는 데 매우 오래 걸립니다.<br>
+                            • 자전 주기: 약 10.7시간 – 매우 빠르게 자전합니다.<br>
+                            ※ 빠른 자전으로 인해 적도는 부풀고 극은 납작한 형태를 띕니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01, 6과03-02<br>
+                                중학교 1학년 - 중과01-03
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 토성의 표면과 특징<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 고체 표면은 없고, 두꺼운 대기와 얼음/암모니아 구름층이 존재합니다.<br>
+                            • 대적점과 같은 거대한 폭풍도 간헐적으로 나타나죠.<br>
+                            • 목성보다 덜 뚜렷한 대기 구조지만, 여전히 띠와 폭풍이 존재해요.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 토성의 대기<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 주성분은 수소(96%)와 헬륨(3%)입니다.<br>
+                            • 메테인, 암모니아, 수소화합물 등이 포함되어 있어요.<br>
+                            • 온도는 매우 낮고, 강한 바람과 대기대 순환이 있습니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 토성의 고리와 위성<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 태양계에서 가장 눈에 띄는 고리 시스템 보유하고 있어요.(얼음과 암석 조각이 넓고 밝게 구성되어 있기 때문이죠.)<br>
+                            • 대표 위성: 타이탄(Titan) – 대기를 가진 위성, 지구보다 큰 위성 중 하나에요.<br>
+                            • 위성 수는 150개 이상으로 추정되고, 대부분 소형입니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 토성의 위치와 궤도<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 태양에서 6번째, 외행성입니다.<br>
+                            • 공전 궤도는 타원형이며, 지구보다 태양에서 멀어 공전 속도는 느립니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01, 6과03-02<br>
+                                중학교 1학년 - 중과01-03
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 토성 탐사<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 대표적인 탐사선: 카시니(Cassini) – 토성 궤도에서 13년간 활동했습니다.<br>
+                            • 고리 구조, 타이탄의 대기, 자기장 등을 탐사합니다.<br>
+                            • 타이탄은 지구 외 생명체 가능성 탐사 대상으로 주목하고 있어요.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                융합 콘텐츠 적합 (중2-확장)
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 토성 요약정리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <table border="1">
+                                <thead>
+                                    <tr>
+                                        <th>카테고리</th>
+                                        <th>핵심 내용 요약</th>
+                                        <th>교육과정 연계 여부</th>                                       
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>기본 정보</td>
+                                        <td>두 번째로 큰 목성형 행성, 낮은 밀도, 기체형</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>공전·자전</td>
+                                        <td>공전 29.5년, 자전 10.7시간</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>표면 특징</td>
+                                        <td>고체 없음, 구름층, 약한 대기 띠와 폭풍</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>대기 유무</td>
+                                        <td>수소, 헬륨, 메테인 포함, 강한 대기 순환</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>궤도 및 위치</td>
+                                        <td>외행성, 태양에서 여섯 번째, 타원형 궤도</td>
+                                        <td>초등 6학년 6과03-01, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>위성/고리</td>
+                                        <td>가장 크고 뚜렷한 고리, 타이탄 포함 위성 다수</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>탐사 사례</td>
+                                        <td>갈릴레오, 주노 탐사선</td>
+                                        <td>직접 연계 없음 (흥미 콘텐츠)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 토성 퀴즈<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <h4>토성 퀴즈</h4>
+
+                            <hr>
+
+                            <p><strong>1. 토성은 물에 뜰 수 있는 유일한 행성으로 알려져 있는데, 그 이유는 무엇인가요?</strong></p>
+                            <label><input type="radio" name="saturn1" value="1"> ① 표면이 얼음으로 되어 있어서</label><br>
+                            <label><input type="radio" name="saturn1" value="2"> ② 밀도가 매우 낮기 때문에</label><br>
+                            <label><input type="radio" name="saturn1" value="3"> ③ 위성이 없기 때문에</label><br>
+                            <label><input type="radio" name="saturn1" value="4"> ④ 대기가 없기 때문에</label><br>
+                            <button onclick="checkAnswer('saturn1', '2')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-01, 6과03-02 / 중등 중2-중과02-04 / 참고 카테고리: 토성 – 토성의 기본 정보)</p>
+
+                            
+                            <hr>
+
+                            <p><strong>2. 토성의 고리가 잘 보이는 이유로 가장 적절한 것은?</strong></p>
+                            <label><input type="radio" name="saturn2" value="1"> ① 고리의 색이 붉기 때문에</label><br>
+                            <label><input type="radio" name="saturn2" value="2"> ② 고리가 매우 얇기 때문에</label><br>
+                            <label><input type="radio" name="saturn2" value="3"> ③ 얼음과 암석 조각으로 이루어져 넓고 밝기 때문</label><br>
+                            <label><input type="radio" name="saturn2" value="4"> ④ 자전 속도가 느리기 때문</label><br>
+                            <button onclick="checkAnswer('saturn2', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-02 / 중등 중2-중과02-04 / 참고 카테고리: 토성 – 토성의 고리와 위성)</p>
+
+                            <hr>
+
+                            <p><strong>3. 다음 중 토성의 대표적인 탐사선으로 올바른 것은?</strong></p>
+                            <label><input type="radio" name="saturn3" value="1"> ① 주노(Juno)</label><br>
+                            <label><input type="radio" name="saturn3" value="2"> ② 큐리오시티(Curiosity)</label><br>
+                            <label><input type="radio" name="saturn3" value="3"> ③ 카시니(Cassini)</label><br>
+                            <label><input type="radio" name="saturn3" value="4"> ④ 보이저 1호</label><br>
+                            <button onclick="checkAnswer('saturn3', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 융합 콘텐츠 활용 (중2-확장) / 참고 카테고리: 토성 – 토성 탐사)</p>
+                           
                         </div>
                     </div>
                 </div>
             </div>
     
-            <div class="nav-item" onclick="toggleItem(event, this)">8. 천왕성<span class="toggle-button">∨</span>
+            <div class="nav-item" >8. 천왕성<span  class="toggle-button"  onclick="toggleItem(event, this.parentElement)">∨</span>
                 <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_6.jpg">
                     <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_6.jpg" alt="천왕성 구조">
                     
                 </a>
                 사진 출처 : 두산백과
                 <div class="sub-items">
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                    <div class="sub-item"  >- 천왕성의 기본 정보<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양 소개 본문 -->
-                            태양은 우리 태양계의 중심에 있는 별입니다...
+                            • 천왕성은 태양계에서 일곱 번째 행성이며, 가장 독특한 공전·자전 축을 가진 행성입니다.<br>
+                            • 목성형(기체형) 행성으로, 청록색 빛깔을 띄는 점이 특징입니다.<br>
+                            • 지구보다 약 4배 크며, 자전축이 98도 기울어져 있어 거의 옆으로 누운 채 회전합니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01, 6과03-02<br>
+                                중학교 2학년 - 중02-04
+                            </p>
                         </div>
                     </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+
+                    <div class="sub-item"  >- 천왕성의 공전과 자전<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양의 탄생 본문 -->
-                            태양은 성운 수축으로 탄생했습니다...
+                            • 공전 주기: 약 84년 – 태양을 한 바퀴 도는 데 매우 오래 걸립니다.<br>
+                            • 자전 주기: 약 17시간 – 빠른 편에 속해요.<br>
+                            • 자전 방향: 일반 행성과 달리 역행 또는 옆으로 회전하는 듯한 형태를 띕니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01, 6과03-02<br>
+                                중학교 1학년 - 중01-03
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 천왕성의 표면과 특징<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 고체 표면 없음<br>
+                            • 주로 얼음과 기체로 구성 → 흔히 <strong>“얼음형 거대 가스 행성”</strong>으로 분류됩니다.<br>
+                            • 외부 대기는 헬륨·수소, 내부에는 암모니아와 메테인 얼음층으로 구성되어 있어요.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중02-04
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 천왕성의 대기<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 주요 성분: 수소, 헬륨, 메테인<br>
+                            • 메테인 가스가 태양빛을 흡수해서 푸른빛 계열로 보입니다.<br>
+                            • 대체로 조용한 대기이지만, 극한 날씨나 바람도 있습니다.<br>
+                            • 자기장 역시 기울어져 있죠.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중02-04
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 천왕성의 위성과 고리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 고리 시스템 보유: 11개 이상의 희미한 고리가 존재합니다.<br>
+                            • 위성 수 약 27개, 대표 위성: 미란다(Miranda), 티타니아(Titania), 오베론(Oberon)<br>
+                            • 대부분 작고 얼음/암석 혼합 성분으로 이루어져 있어요.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중02-04
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 천왕성의 위치와 궤도<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 태양에서 일곱 번째, 외행성입니다.<br>
+                            • 공전 궤도는 타원형이며, 지구보다 훨씬 먼 거리에 위치해 있어요.<br>
+                            • 공전 속도는 매우 느립니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01, 6과03-02<br>
+                                중학교 - 중01-03
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 천왕성 탐사<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 탐사선: <strong>보이저 2호(Voyager 2)</strong>가 유일하게 근접 통과 (1986년)<br>
+                            • 아직 궤도선이나 착륙선은 없었어요.<br>
+                            • 향후 NASA/ESA의 심우주 얼음형 행성 탐사 계획 후보입니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                직접 성취기준 언급 없음 (융합 콘텐츠로 활용 가능)<br>
+                                중등: 중2-확장
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 천왕성 요약정리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <table border="1">
+                                <thead>
+                                    <tr>
+                                        <th>카테고리</th>
+                                        <th>핵심 내용 요약</th>
+                                        <th>교육과정 연계 여부</th>                                       
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>기본 정보</td>
+                                        <td>옆으로 누운 회전, 청록색, 목성형 행성</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>공전·자전</td>
+                                        <td>공전 84년, 자전 17시간(축이 옆으로 누움)</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>표면 특징</td>
+                                        <td>고체 없음, 얼음+기체 구조, 메테인 포함</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>대기 유무</td>
+                                        <td>수소, 헬륨, 메테인 -> 파란색 외형, 자기장 기울어짐</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>궤도 및 위치</td>
+                                        <td>외행성, 태양에서 일곱 번째, 공전 매우 느림</td>
+                                        <td>초등 6학년 6과03-01, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>위성/고리</td>
+                                        <td>희미한 고리 11개 이상, 위성 27개 존재</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>탐사 사례</td>
+                                        <td>보이저 2호 근접 탐사</td>
+                                        <td>직접 연계 없음 (흥미 콘텐츠)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 천왕성 퀴즈<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <h4>천왕성 퀴즈</h4>
+
+                            <hr>
+
+                            <p><strong>1. 천왕성은 어떤 특징 때문에 "옆으로 누운 행성"이라고 불리나요?</strong></p>
+                            <label><input type="radio" name="uranus1" value="1"> ① 고리가 기울어져 있어서</label><br>
+                            <label><input type="radio" name="uranus1" value="2"> ② 자전축이 약 98도 기울어져 있어서</label><br>
+                            <label><input type="radio" name="uranus1" value="3"> ③ 공전 궤도가 가로로 펼쳐져 있어서</label><br>
+                            <label><input type="radio" name="uranus1" value="4"> ④ 위성이 많기 때문에</label><br>
+                            <button onclick="checkAnswer('uranus1', '2')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-01, 6과03-02 / 중등 중1-중과01-03 / 참고 카테고리: 천왕성 – 천왕성의 공전과 자전)</p>
+
+                            
+                            <hr>
+
+                            <p><strong>2. 천왕성의 외형이 푸른색을 띠는 주요 이유는?</strong></p>
+                            <label><input type="radio" name="uranus2" value="1"> ① 헬륨이 많아서</label><br>
+                            <label><input type="radio" name="uranus2" value="2"> ② 메테인 가스가 태양빛을 흡수해서</label><br>
+                            <label><input type="radio" name="uranus2" value="3"> ③ 고리의 반사 때문</label><br>
+                            <label><input type="radio" name="uranus2" value="4"> ④ 극지방 얼음이 반사되기 때문에</label><br>
+                            <button onclick="checkAnswer('uranus2', '2')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-02 / 중등 중2-중과02-04 / 참고 카테고리: 천왕성 – 천왕성의 대기)</p>
+
+
+                            <hr>
+
+                            <p><strong>3. 천왕성을 근접 통과한 유일한 탐사선은 무엇인가요?</strong></p>
+                            <label><input type="radio" name="uranus3" value="1"> ① 카시니(Cassini)</label><br>
+                            <label><input type="radio" name="uranus3" value="2"> ② 갈릴레오(Galileo)</label><br>
+                            <label><input type="radio" name="uranus3" value="3"> ③ 보이저 2호(Voyager 2)</label><br>
+                            <label><input type="radio" name="uranus3" value="4"> ④ 주노(Juno)</label><br>
+                            <button onclick="checkAnswer('uranus3', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 융합 콘텐츠 적합 (중2 확장) / 참고 카테고리: 천왕성 – 천왕성 탐사)</p>
+
                         </div>
                     </div>
                 </div>
             </div>
     
-            <div class="nav-item" onclick="toggleItem(event, this)">9. 해왕성<span class="toggle-button">∨</span>
+            <div class="nav-item" >9. 해왕성<span  class="toggle-button"  onclick="toggleItem(event, this.parentElement)">∨</span>
                 <a class = "light" href="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_7.jpg">
                     <img style="width: 50%;" src="https://raw.githubusercontent.com/webProgramingProject/webProject_solar_system/refs/heads/main/planet_7.jpg" alt="해왕성 구조">
                     
                 </a>
                 사진 출처 : 두산백과
                 <div class="sub-items">
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 소개<span class="toggle-button">∨</span>
+                    <div class="sub-item"  >- 해왕성의 기본 정보<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양 소개 본문 -->
-                            태양은 우리 태양계의 중심에 있는 별입니다...
+                            • 해왕성은 태양계에서 여덟 번째 행성, 태양에서 가장 멀리 있는 행성입니다.<br>
+                            • 목성형(기체형) 행성으로 분류되며, 크기와 구성 면에서 천왕성과 비슷합니다.<br>
+                            • 푸른색 외형은 대기 중 메테인 때문이며, 태양계 행성 중 가장 강한 바람이 부는 행성이기도 합니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01, 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
                         </div>
                     </div>
-                    <div class="sub-item" onclick="toggleSubItem(event, this)">- 태양의 탄생<span class="toggle-button">∨</span>
+
+                    <div class="sub-item"  >- 해왕성의 공전과 자전<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
                         <div class="sub-content">
-                            <!-- 태양의 탄생 본문 -->
-                            태양은 성운 수축으로 탄생했습니다...
+                            • 공전 주기: 약 165년 – 태양을 한 바퀴 도는 데 가장 오래 걸림<br>
+                            • 자전 주기: 약 16시간 – 빠르게 자전함<br>
+                            • 자전축은 지구와 비슷한 정도로 기울어져 있음
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01, 6과03-02<br>
+                                중학교 1학년 - 중01-03
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 해왕성의 표면과 특징<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 고체 표면 없음, 얼음과 기체로 구성된 구조<br>
+                            • 과거 대적점과 유사한 암청색 폭풍 관측됨 (현재는 사라짐)<br>
+                            • 대기의 움직임이 매우 역동적이며 가로줄 형태의 띠 존재
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 해왕성의 대기<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 수소, 헬륨, 메테인으로 구성되어 있습니다.<br>
+                            • 메테인 가스가 햇빛 중 붉은빛을 흡수하고 푸른빛을 반사하여서 푸른 외형을 갖고 있어요.<br>
+                            • 태양과 멀어 에너지 보존이 잘되기 때문에 바람 속도가 최대 2,000km/h 이상으로 태양계에서 가장 강하답니다.<br>
+                            • 극지방과 적도의 대기 활동 차이 뚜렷합니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 해왕성의 위성과 고리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 고리 시스템이 존재합니다. 얇고 어두운 먼지 고리이며, 5개 이상 갖고 있어요.<br>
+                            • 위성 수: 약 14개, 대표 위성은 트리톤(Triton)입니다.<br>
+                            • 위성인 트리톤은 역행 공전하며 극저온/질소간헐 분출 등 독특한 활동이 존재합니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-02<br>
+                                중학교 2학년 - 중과02-04
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 해왕성의 위치와 궤도<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • 태양에서 8번째, 가장 먼 외행성입니다.<br>
+                            • 공전 궤도는 타원형, 거리도 가장 멀죠.<br>
+                            • 공전 속도는 태양계 중 가장 느립니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                초등학교 6학년 - 6과03-01, 6과03-02<br>
+                                중학교 1학년 - 중과01-03
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-item"  >- 해왕성 탐사<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            • <strong>보이저 2호(Voyager 2)</strong>가 유일하게 접근한 탐사선입니다.(1989년 근접 통과)<br>
+                            • 트리톤 위성과 대기, 고리 구조 등 최초 관측<br>
+                            • 이후 직접적인 탐사는 미진행되었으며, 향후 탐사 대상 후보 중 하나입니다.
+                            <p>
+                                * 관련 교육 과정 *<br>
+                                직접 명시 없음 (융합 콘텐츠 활용 가능)<br>
+                                중등: 중2-확장
+                            </p>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 해왕성 요약정리<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <table border="1">
+                                <thead>
+                                    <tr>
+                                        <th>카테고리</th>
+                                        <th>핵심 내용 요약</th>
+                                        <th>교육과정 연계 여부</th>                                       
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>기본 정보</td>
+                                        <td>가장 먼 외행성, 청색 외형, 목성형 행성</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>공전·자전</td>
+                                        <td>공전 165년, 자전 16시간</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>표면 특징</td>
+                                        <td>고체 없음, 폭풍, 띠 형태 대기</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>대기 유무</td>
+                                        <td>수소, 헬륨, 메테인, 초고속 바람</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>궤도 및 위치</td>
+                                        <td>외행성, 태양에서 여덟덟 번째, 공전 매우 느림</td>
+                                        <td>초등 6학년 6과03-01, 6과03-02, 중등 1학년 중과01-03</td>
+                                    </tr>
+                                    <tr>
+                                        <td>위성/고리</td>
+                                        <td>희미한 고리 11개 이상, 위성 27개 존재</td>
+                                        <td>초등 6학년 6과03-02, 중등 2학년 중과02-04</td>
+                                    </tr>
+                                    <tr>
+                                        <td>탐사 사례</td>
+                                        <td>보이저 2호 유일 탐사</td>
+                                        <td>직접 연계 없음 (흥미 콘텐츠)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="sub-item"  >- 해왕성 퀴즈<span  class="toggle-button"  onclick="toggleSubItem(event, this.parentElement)">∨</span>
+                        <div class="sub-content">
+                            <h4>해왕성 퀴즈</h4>
+
+                            <hr>
+
+                            <p><strong>1. 해왕성의 외형이 푸른빛을 띠는 주된 이유는 무엇인가요?</strong></p>
+                            <label><input type="radio" name="neptune1" value="1"> ① 위성에서 반사된 빛 때문</label><br>
+                            <label><input type="radio" name="neptune1" value="2"> ② 바다로 덮여 있어서</label><br>
+                            <label><input type="radio" name="neptune1" value="3"> ③ 메테인 가스가 햇빛 중 붉은빛을 흡수해서</label><br>
+                            <label><input type="radio" name="neptune1" value="4"> ④ 대기 속 수소가 반사되기 때문에</label><br>
+                            <button onclick="checkAnswer('neptune1', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-02 / 중등 중2-중과02-04 / 참고 카테고리: 해왕성 – 해왕성의 대기)</p>
+
+                            
+                            <hr>
+
+                            <p><strong>2. 해왕성에서 가장 빠른 바람이 부는 이유는?</strong></p>
+                            <label><input type="radio" name="neptune2" value="1"> ① 공전 속도가 빠르기 때문에</label><br>
+                            <label><input type="radio" name="neptune2" value="2"> ② 위성이 많기 때문에</label><br>
+                            <label><input type="radio" name="neptune2" value="3"> ③ 태양과 가장 멀어 에너지 보존이 잘 되기 때문</label><br>
+                            <label><input type="radio" name="neptune2" value="4"> ④ 고리와 충돌하는 기체가 많기 때문</label><br>
+                            <button onclick="checkAnswer('neptune2', '3')">제출</button>
+                            <p class="reference">(교육과정 연계: 초등 6과03-02 / 중등 중2-중과02-04 / 참고 카테고리: 해왕성 – 해왕성의 대기)</p>
+
+
+                            <hr>
+
+                            <p><strong>3. 해왕성을 유일하게 근접 탐사한 탐사선은 무엇인가요?</strong></p>
+                            <label><input type="radio" name="neptune3" value="1"> ① 카시니(Cassini)</label><br>
+                            <label><input type="radio" name="neptune3" value="2"> ② 보이저 2호(Voyager 2)</label><br>
+                            <label><input type="radio" name="neptune3" value="3"> ③ 주노(Juno)</label><br>
+                            <label><input type="radio" name="neptune3" value="4"> ④ 뉴 허라이즌스(New Horizons)</label><br>
+                            <button onclick="checkAnswer('neptune3', '2')">제출</button>
+                            <p class="reference">(교육과정 연계: 융합 콘텐츠 적합 (중2 확장) / 참고 카테고리: 해왕성 – 해왕성 탐사)</p>
+
                         </div>
                     </div>
                 </div>
