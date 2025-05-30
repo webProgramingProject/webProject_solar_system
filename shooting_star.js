@@ -74,7 +74,7 @@
         animate();
     
         // ⭐️ aside 안의 버튼들 클릭할 때 별똥별 + 소리
-        const shootingSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_e8b5d15ce7.mp3?filename=shooting-star-104854.mp3');
+        const shootingSound = new Audio('shine-1-268902.mp3');
     
         document.querySelectorAll('#right button').forEach(button => {
             button.addEventListener('click', () => {

@@ -3,7 +3,8 @@ body {
     }
 
     #right {
-      width: 8%; height: 80%
+      width: 8%; height: 80%;
+      position: relative;
     }
 
     .toggle-btn {
@@ -31,5 +32,5 @@ body {
 
 
     .menu-item:hover {
-      background-color: #ddd;
+      background-color: rgba(223, 224, 230, 0.7);
     }

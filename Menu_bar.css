@@ -12,7 +12,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 2; /* 3D 태양계 캔버스보다 아래쪽 */
+            z-index: 2; /* 3D 태양계 캔버스보다 위쪽 */
             pointer-events: none;
         }
         canvas#c {
@@ -22,7 +22,6 @@
             display: block;
             position: absolute;
         }
-
         .menu-items button {
             font-family: NanumBarunPen;
             margin: 0 auto;
